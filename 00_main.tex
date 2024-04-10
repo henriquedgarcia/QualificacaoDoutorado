@@ -1,0 +1,237 @@
+\documentclass{unbthesis}
+\usepackage{amssymb,amsfonts,amstext,amsmath}
+\DeclareMathOperator{\sen}{sen}
+\DeclareMathOperator{\argum}{arg}
+\usepackage[english,brazil]{babel}
+\usepackage{blindtext}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} 
+\usepackage{color}
+\usepackage{subfigure}
+\usepackage{setspace}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{dirtree}
+\usepackage{colortbl}
+\usepackage{verbatim}
+\usepackage{lscape}
+\usepackage{indentfirst}
+\usepackage[bookmarks=true,bookmarksopen=false,linktocpage=true,pagebackref,hidelinks]{hyperref}
+\usepackage[alf,abnt-etal-text=it,abnt-etal-list=0,abnt-etal-cite=2,abnt-and-type=&,abnt-year-extra-label=yes]{abntex2cite}
+
+\usepackage{algorithmic}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{xfrac}
+\usepackage{booktabs}
+\usepackage{soul}
+\usepackage{subfigure}
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{graphics,graphicx}
+\usepackage{epstopdf}
+\usepackage{array}
+\usepackage{icomma}
+\usepackage{makecell}
+
+% Configurações do pacote backref
+% Usado sem a opção hyperpageref de backref
+\renewcommand{\backrefpagesname}{Cited in page(s):~}
+% Texto padrão antes do número das páginas
+\renewcommand{\backref}{}
+% Define os textos da citação
+\renewcommand*{\backrefalt}[4]{
+\ifcase #1 %
+No citation in text.%
+\or
+Cited in page #2.%
+\else
+Cited #1 times in pages #2.%
+\fi}%
+
+\usepackage{pbox}
+\usepackage{booktabs}
+\usepackage{ctable}
+\usepackage{multirow}
+\usepackage{fancyhdr}
+\usepackage{fancyvrb}
+\usepackage{relsize}
+\usepackage{calc}
+\usepackage{psfrag}
+\usepackage{epstopdf}
+\usepackage{wallpaper}
+\usepackage{paralist}
+%\usepackage{hhline} %pacote para criar linhas horizontais segmentadas
+%\usepackage{url}
+%\usepackage{layout}
+%\usepackage[retainorgcmds]{IEEEtrantools}
+\usepackage{afterpage}
+
+\setlength{\LTcapwidth}{17cm} \setlength{\textwidth}{17cm}
+\setlength{\textheight}{24.9cm} \setlength{\topmargin}{-0.5in}
+
+%NOVOS COMANDOS
+\newcommand{\FuncSen}[1]{\mbox{\hspace{0.5mm}sen\hspace{0.5mm}}#1}
+\newcommand{\FuncCos}[1]{\mbox{\hspace{0.5mm}cos\hspace{0.5mm}}#1}
+\newcommand{\palfa}[1]{\mbox{plano-$\alpha$}#1}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+
+%DEIXA ESPAÇOS EXTRAS, QUE O LATEX CRIA, NO FIM DA PÁGINA
+%\raggedbottom
+
+
+
+\addto\captionsbrazil{%
+	\renewcommand{\contentsname}{Sumário}
+	\renewcommand{\listfigurename}{Lista de Figuras}
+	\renewcommand{\listtablename}{Lista de Tabelas}
+	\renewcommand{\refname}{Referências}
+	\renewcommand{\bibname}{References}
+	\renewcommand{\chaptername}{Capítulo}
+	\renewcommand{\figurename}{Figura}
+	\renewcommand{\tablename}{Tabela}
+	\renewcommand{\acknowledgementsname}{Agradecimentos}
+}
+
+
+%%%VARIÁVEIS DO TEMPLATE - AJUSTAR DE ACORDO - se usar direito vai ter menos trabalho!
+
+%variáveis exibidas na capa e contracapa
+\newcommand{\ttitle}{Modeling and Evaluation of Adaptive 360-Degree Video Streaming with Tiles}
+\newcommand{\tauthor}{Henrique Domingues Garcia}
+\newcommand{\tdoctype}{Doctoral dissertations}
+\newcommand{\tcourse}{Electrical Engineering}
+\newcommand{\tdepartment}{Electrical Engineering Department}
+\newcommand{\tdpt}{ENE} 
+
+\newcommand{\tdegree}{Doctor}
+
+%variáveis utilizadas na ficha catalográfica
+\newcommand{\tlocal}{Brasília/DF}
+\newcommand{\tday}{30}
+\newcommand{\tmonth}{Abril}
+\newcommand{\tyear}{2024}
+
+%nome para citação
+\newcommand{\tsurname}{Garcia}
+\newcommand{\tfirstname}{H. D.}
+
+\begin{document}
+
+%PEDIDO DE MODELO COM AS DIMENSÕES DA PÁGINA
+%PRECISA DO PACKAGE "layout"
+%\layout
+
+%NOVO ESPAÇAMENTO
+\baselineskip 20pt
+\parskip 5pt
+\pagestyle{empty}
+
+\pdfbookmark[0]{Cover}{Cover}
+\include{01_cover}
+\include{02_approval}
+\include{03_copyright}
+
+%NOVO ESPAÇAMENTO
+\baselineskip 22pt
+\pdfbookmark[0]{Dedication}{Dedication}
+\include{03.1_dedicatory}
+\pdfbookmark[0]{Acknowledgements}{Acknowledgements}
+\include{03.2_acknowledgements}
+\pdfbookmark[0]{Abstract}{Abstract}
+\include{03.3_abstract}
+\pdfbookmark[0]{Resumo}{Resumo}
+\include{03.4_resumo}
+%% DEFINE CABEÇALHO DO SUMÁRIO E DAS LISTAS
+
+%IMPRESSÃO SOMENTE FRENTE
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{ #1}{}}
+\fancyhf{}
+\fancyhead[RE,RO]{\fontsize{9}{10}\thepage}
+\fancyhead[LO,LE]{\fontsize{9}{10}\textit{\textsc{\nouppercase\leftmark}}}
+
+%NOVO ESPAÇAMENTO
+\baselineskip 14pt
+\pagenumbering{roman}
+
+%% Sumário (gerado automáticamente)
+\phantomsection %comando para fazer os bookmarks funcionarem na seção abaixo
+\addcontentsline{toc}{chapter}{Sumário}
+\tableofcontents
+
+%NOVO ESPAÇAMENTO
+\baselineskip 23pt
+
+%% Lista de figuras (gerada automaticamente)
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Lista de Figuras}
+\listoffigures
+
+%% Lista de tabelas (gerada automaticamente)
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Lista de Tabelas}
+\listoftables
+
+%% Lista de Simbolos (gerada manualmente)
+\markboth{Lista de Símbolos}{Lista de Símbolos}
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Lista de Símbolos}
+\include{10_symbols}
+
+%% Glossario (gerada manualmente)
+\markboth{Glossário}{Glossário}
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Glossário}
+\include{11_glossary}
+
+\pagestyle{empty}
+\pagenumbering{arabic}
+
+%NOVO ESPAÇAMENTO
+\baselineskip 23pt
+\parskip 5pt
+
+%IMPRESSÃO SOMENTE FRENTE
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter\hspace{2mm}--\hspace{2mm}#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\hspace{2mm}--\hspace{2mm}#1}{}}
+\fancyhf{}
+\fancyhead[RE,RO]{\fontsize{9}{10}\textit{\textsc{\thepage}}}
+\fancyhead[LE,LO]{\fontsize{9}{10}\textit{\textsc{\rightmark}}}
+\renewcommand{\footrulewidth}{0.0pt} %Definindo a espessura de uma linha do rodapé
+
+\include{04_cp1_introduction}
+% \include{04_cp2_related works}
+\include{04_cp3_problem_design}
+\include{04_cp4_evaluation}
+%\include{04_cp5_results}
+\include{04_cp6_conclusion}
+
+
+% DEFINE CABEÇALHO PARA A BIBLIOGRAFIA
+\pagestyle{fancy}
+\fancyhead[RE,RO]{\fontsize{9}{10}\textit{\textsc{\thepage}}}
+\fancyhead[LE,LO]{\fontsize{9}{10}\textit{\textsc{\nouppercase{\rightmark}}}}
+
+%% BIBLIOGRAFIA (GERADO AUTOMATICAMENTE)
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{References}
+\bibliography{library}
+
+% DEFINE CABEÇALHO PARA O APÊNDICE
+\pagestyle{fancy}
+\fancyhead[RE,RO]{\fontsize{9}{10}\textit{\textsc{\thepage}}}
+\fancyhead[LE,LO]{\fontsize{9}{10}\textit{\textsc{\nouppercase{\rightmark}}}}
+
+%\appendix
+%\include{15-Apendices}
+
+\end{document} 
