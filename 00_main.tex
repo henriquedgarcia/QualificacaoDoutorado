@@ -132,9 +132,7 @@ Cited #1 times in pages #2.%
 \pdfbookmark[0]{Cover}{Cover}
 \include{01_cover}
 \include{02_approval}
-\include{03_copyright}
-
-%NOVO ESPAÇAMENTO
+\include{03.0_copyright}
 \baselineskip 22pt
 \pdfbookmark[0]{Dedication}{Dedication}
 \include{03.1_dedicatory}
@@ -144,7 +142,6 @@ Cited #1 times in pages #2.%
 \include{03.3_abstract}
 \pdfbookmark[0]{Resumo}{Resumo}
 \include{03.4_resumo}
-%% DEFINE CABEÇALHO DO SUMÁRIO E DAS LISTAS
 
 %IMPRESSÃO SOMENTE FRENTE
 \pagestyle{fancy}
@@ -207,12 +204,16 @@ Cited #1 times in pages #2.%
 \fancyhead[LE,LO]{\fontsize{9}{10}\textit{\textsc{\rightmark}}}
 \renewcommand{\footrulewidth}{0.0pt} %Definindo a espessura de uma linha do rodapé
 
-\include{04_cp1_introduction}
-% \include{04_cp2_related works}
-\include{04_cp3_problem_design}
-\include{04_cp4_evaluation}
-%\include{04_cp5_results}
-\include{04_cp6_conclusion}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%% CORPO DO TRABALHO %%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\include{04_body}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 % DEFINE CABEÇALHO PARA A BIBLIOGRAFIA
