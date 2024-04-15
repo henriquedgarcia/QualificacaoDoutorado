@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="637.5965"
+   height="101.98032"
+   viewBox="0 0 168.69741 26.982292"
+   version="1.1"
+   id="svg5396"
+   inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
+   sodipodi:docname="Fluxograma1.svg"
+   inkscape:export-filename="Fluxograma1.png"
+   inkscape:export-xdpi="299.867"
+   inkscape:export-ydpi="299.867"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview5398"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="1.1893044"
+     inkscape:cx="388.46236"
+     inkscape:cy="-75.674487"
+     inkscape:window-width="1680"
+     inkscape:window-height="979"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid7230"
+       originx="-26.412121"
+       originy="-17.606571" />
+  </sodipodi:namedview>
+  <defs
+     id="defs5393">
+    <marker
+       style="overflow:visible"
+       id="Arrow2"
+       refX="5"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Arrow2"
+       markerWidth="7.6999998"
+       markerHeight="5.5999999"
+       viewBox="0 0 7.7 5.6"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="arrow2L" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-26.412124,-17.606571)">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2);paint-order:normal"
+       d="m 46.050768,39.635144 h 6.86525"
+       id="path7629" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2);paint-order:normal"
+       d="m 83.817874,39.635144 h 6.865247"
+       id="path7631" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2);paint-order:normal"
+       d="m 115.86243,39.635144 h 6.86525"
+       id="path7633" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2);paint-order:normal"
+       d="m 142.23403,39.635144 h 6.86526"
+       id="path7635" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2);paint-order:normal"
+       d="m 158.85246,34.915863 v -7.73844"
+       id="path7637" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2);paint-order:normal"
+       d="m 168.60564,39.635144 h 6.86525"
+       id="path7639" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2);paint-order:normal"
+       d="M 185.22406,34.915863 V 27.17742"
+       id="path7641" />
+    <g
+       id="g1011"
+       transform="translate(15.511596,-0.33816337)">
+      <rect
+         style="fill:#b2efff;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;fill-opacity:1"
+         id="rect184"
+         width="19.506353"
+         height="9.4385586"
+         x="11.03282"
+         y="35.254028"
+         ry="1.2584746" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583;stroke-dasharray:none"
+         x="20.76483"
+         y="39.091366"
+         id="text845"><tspan
+           sodipodi:role="line"
+           id="tspan843"
+           style="stroke-width:0.264583;stroke-dasharray:none"
+           x="20.76483"
+           y="39.091366">YouTube</tspan><tspan
+           sodipodi:role="line"
+           style="stroke-width:0.264583;stroke-dasharray:none"
+           x="20.76483"
+           y="43.50108"
+           id="tspan847">Download</tspan></text>
+    </g>
+    <g
+       id="g1011-7-7-2"
+       transform="translate(138.06647,-0.33816337)">
+      <rect
+         style="fill:#b2efff;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;fill-opacity:1"
+         id="rect184-0-4-4"
+         width="19.506353"
+         height="9.4385586"
+         x="11.03282"
+         y="35.254028"
+         ry="1.2584746" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583;stroke-dasharray:none"
+         x="20.828329"
+         y="40.89053"
+         id="text845-6-23-9"><tspan
+           sodipodi:role="line"
+           style="stroke-width:0.264583;stroke-dasharray:none"
+           x="20.828329"
+           y="40.89053"
+           id="tspan1392-5">Chunking</tspan></text>
+    </g>
+    <g
+       id="g1011-7-7-2-6"
+       transform="translate(138.06647,-17.515166)">
+      <rect
+         style="fill:#aade87;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+         id="rect184-0-4-4-3"
+         width="19.506353"
+         height="9.4385586"
+         x="11.03282"
+         y="35.254028"
+         ry="1.2584746" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583;stroke-dasharray:none"
+         x="20.704857"
+         y="41.255653"
+         id="text845-6-23-9-7"><tspan
+           sodipodi:role="line"
+           style="stroke-width:0.264583;stroke-dasharray:none"
+           x="20.704857"
+           y="41.255653"
+           id="tspan1392-5-3">Bitrate</tspan></text>
+    </g>
+    <g
+       id="g7264"
+       transform="translate(-1.1741333e-5)">
+      <path
+         style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2)"
+         d="M 87.250508,39.635143 V 22.458141 h 19.454902"
+         id="path8793" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2)"
+         d="M 145.66667,39.635143 V 22.458141 h -19.4549"
+         id="path8795" />
+      <rect
+         style="fill:#aade87;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+         id="rect184-0-4-4-3-0"
+         width="19.506353"
+         height="9.4385586"
+         x="175.4709"
+         y="17.738861"
+         ry="1.2584746" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583;stroke-dasharray:none"
+         x="185.20291"
+         y="21.576199"
+         id="text845-6-23-9-7-1"><tspan
+           sodipodi:role="line"
+           style="stroke-width:0.264583;stroke-dasharray:none"
+           x="185.20291"
+           y="21.576199"
+           id="tspan1392-5-3-5">Decoding</tspan><tspan
+           sodipodi:role="line"
+           style="stroke-width:0.264583;stroke-dasharray:none"
+           x="185.20291"
+           y="25.98591"
+           id="tspan2133">Time</tspan></text>
+    </g>
+    <g
+       id="g1011-7-7-2-9"
+       transform="translate(164.43807,-0.33816337)">
+      <rect
+         style="fill:#b2efff;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;fill-opacity:1"
+         id="rect184-0-4-4-2"
+         width="19.506353"
+         height="9.4385586"
+         x="11.03282"
+         y="35.254028"
+         ry="1.2584746" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583;stroke-dasharray:none"
+         x="20.828329"
+         y="40.89053"
+         id="text845-6-23-9-1"><tspan
+           sodipodi:role="line"
+           style="stroke-width:0.264583;stroke-dasharray:none"
+           x="20.828329"
+           y="40.89053"
+           id="tspan1392-5-4">Decoding</tspan></text>
+    </g>
+    <g
+       id="g1011-7-7-2-5"
+       transform="translate(95.672582,-17.515166)">
+      <rect
+         style="fill:#aade87;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+         id="rect184-0-4-4-5"
+         width="19.506353"
+         height="9.4385586"
+         x="11.03282"
+         y="35.254028"
+         ry="1.2584746" />
+      <text
+         xml:space="preserve"
+         style="font-size:2.46944px;line-height:1;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583;stroke-dasharray:none"
+         x="20.7897"
+         y="38.385456"
+         id="text845-6-23-9-5"><tspan
+           sodipodi:role="line"
+           style="font-size:2.46944px;stroke-width:0.264583;stroke-dasharray:none"
+           x="20.7897"
+           y="38.385456"
+           id="tspan1392-5-1">PSNR</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:2.46944px;stroke-width:0.264583;stroke-dasharray:none"
+           x="20.7897"
+           y="40.854897"
+           id="tspan1549">S-PSNR</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:2.46944px;stroke-width:0.264583;stroke-dasharray:none"
+           x="20.7897"
+           y="43.324337"
+           id="tspan1551">WS-PSNR</tspan></text>
+    </g>
+    <g
+       id="g7258">
+      <g
+         id="g1011-7-7"
+         transform="translate(111.69486,-0.33816337)">
+        <rect
+           style="fill:#b2efff;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;fill-opacity:1"
+           id="rect184-0-4"
+           width="19.506353"
+           height="9.4385586"
+           x="11.03282"
+           y="35.254028"
+           ry="1.2584746" />
+        <text
+           xml:space="preserve"
+           style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583;stroke-dasharray:none"
+           x="20.76483"
+           y="39.091366"
+           id="text845-6-23"><tspan
+             sodipodi:role="line"
+             style="stroke-width:0.264583;stroke-dasharray:none"
+             x="20.76483"
+             y="39.091366"
+             id="tspan1388">x265</tspan><tspan
+             sodipodi:role="line"
+             style="stroke-width:0.264583;stroke-dasharray:none"
+             x="20.76483"
+             y="43.50108"
+             id="tspan1392">encoder</tspan></text>
+      </g>
+      <g
+         id="g1011-7-1"
+         transform="translate(79.650305,-0.33816423)">
+        <g
+           id="g1260"
+           transform="translate(2.9105608,-0.40569362)">
+          <rect
+             style="fill:#b2efff;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;fill-opacity:1"
+             id="rect184-0-6"
+             width="25.179312"
+             height="9.6428537"
+             x="8.1222572"
+             y="35.557575"
+             ry="1.2584746" />
+          <text
+             xml:space="preserve"
+             style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583;stroke-dasharray:none"
+             x="20.76483"
+             y="39.091366"
+             id="text845-6-2"><tspan
+               sodipodi:role="line"
+               style="stroke-width:0.264583;stroke-dasharray:none"
+               x="20.76483"
+               y="39.091366"
+               id="tspan847-6-8">Tiling</tspan><tspan
+               sodipodi:role="line"
+               style="stroke-width:0.264583;stroke-dasharray:none"
+               x="20.76483"
+               y="43.50108"
+               id="tspan1107-3">segmentation</tspan></text>
+        </g>
+      </g>
+    </g>
+    <g
+       id="g7239"
+       transform="translate(-0.79746729)">
+      <g
+         id="g1011-7"
+         transform="translate(42.680666,-0.33816432)">
+        <rect
+           style="fill:#b2efff;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;fill-opacity:1"
+           id="rect184-0"
+           width="30.901855"
+           height="9.4385605"
+           x="11.03282"
+           y="35.254028"
+           ry="1.2584746" />
+      </g>
+      <text
+         xml:space="preserve"
+         style="font-size:2.82222px;line-height:1;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="69.270248"
+         y="39.282368"
+         id="text1336"><tspan
+           sodipodi:role="line"
+           style="font-size:2.82222px;stroke-width:0.264583"
+           x="69.270248"
+           y="39.282368"
+           id="tspan9555">Temporal and Spatial</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:2.82222px;stroke-width:0.264583"
+           x="69.270248"
+           y="42.104588"
+           id="tspan9559">Standardization</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:2.82222px;stroke-width:0.264583"
+           x="69.270248"
+           y="44.926807"
+           id="tspan9553" /></text>
+    </g>
+  </g>
+</svg>
