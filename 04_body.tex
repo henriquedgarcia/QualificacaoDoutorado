@@ -362,103 +362,101 @@ Assim, topos os vídeos foram convertidos para as projeções cubemap e equirret
 
 A Tabela~\ref{tab:list_videos} exibe a lista dos cinquenta e seis vídeos utilizados. Os vídeos estão codificados com CRF 28 com a configuração padrão do codificador x265. Conforme estudo de Nasrabadi, os vídeos foram classificados de acordo com o movimento da câmera e o numero de objetos na cena. O número de objetos na cena foram definidos pelo autor. O valor da coluna "Grupo" é composto pela primeira inicial do tipo de movimento de câmera (fixo, horizontal, vertical, rotacional, múltiplo) e numero de objetos na cena (nenhum, simples, múltiplo). Assim, o grupo "VM" corresponde ao movimento Vertical com Múltiplos objetos.
 
-\begin{longtable}{|c|c|c|c|c|c|}
+\begin{longtable}{|c|c|c|c|c|c|c|}
 	\caption{Vídeos usados no experimento}
 	\label{tab:list_videos} 
 	\\
 	
 	\hline
-	Grupo & Nome & Projeção & SI & TI  &  \makecell{Taxa de \\ Bits (Mbps)} \\
+	Câmera & Objetos & Nome & Projeção & SI & TI  &  \makecell{Taxa de \\ Bits (Mbps)} \\
 	\hline
 	\endfirsthead
 	
-	\multicolumn{6}{c}%
+	\multicolumn{7}{c}%
 	{{\bfseries \tablename\ \thetable{} -- Continuação da página anterior}} \\
 	\hline
-	Grupo & Nome & Projeção & SI & TI  &  \makecell{Taxa de \\ Bits (Mbps)} \\
+%	Grupo & Nome & Projeção & SI & TI  &  \makecell{Taxa de \\ Bits (Mbps)} \\
+	Câmera & Objetos & Nome & Projeção & SI & TI  &  \makecell{Taxa de \\ Bits (Mbps)} \\
 	\hline
 	
 	\endhead
 	
-	\multicolumn{6}{|r|}{{Continua na próxima página}} \\ \hline
+	\multicolumn{7}{|r|}{{Continua na próxima página}} \\ \hline
 	\endfoot
 	
 	\hline
 	\endlastfoot
 	
 	
-	\multirow{4}{*}{FN} & \multirow{2}{*}{montana} & ERP &  33.4 &   0.34 &   3.033 \\  \cline{3-6}
-	&                    & CMP &  35.7 &   0.19 &   2.811 \\  \cline{2-6}
-	& \multirow{2}{*}{sunset}                   & ERP &  15.6 &   0.44 &   1.571 \\ \cline{3-6}
-	&                    & CMP &  18.7 &   0.46 &   1.442 \\ \hline
+	\multirow{12}{*}{Fixo} & \multirow{4}{*}{Nenhum} & \multirow{2}{*}{montana} & ERP &  33.4 &   0.34 &   3.033 \\  \cline{3-6}
+						   &						 &                    		& CMP &  35.7 &   0.19 &   2.811 \\  \cline{2-6}
+						   &						 & \multirow{2}{*}{sunset}  & ERP &  15.6 &   0.44 &   1.571 \\ \cline{3-6}
+						   &						 &                   		& CMP &  18.7 &   0.46 &   1.442 \\ \hline
 	
-	\multirow{4}{*}{FS} & \multirow{2}{*}{closet\_tour} & ERP &  51.0 &   1.65 &   2.349 \\ \cline{3-6}
-	&                         & CMP &  57.2 &   1.95 &   2.276 \\ \cline{2-6}
-	& \multirow{2}{*}{video\_04}                     & ERP &  49.9 &   1.19 &   2.875 \\ \cline{3-6}
-	&                        & CMP &  50.9 &   1.11 &   2.245 \\ \hline
+						   & \multirow{4}{*}{FS} 	 & \multirow{2}{*}{closet\_tour} & ERP &  51.0 &   1.65 &   2.349 \\ \cline{3-6}
+						   &				 	 	 &                         & CMP &  57.2 &   1.95 &   2.276 \\ \cline{2-6}
+						   &						 & \multirow{2}{*}{video\_04}                     & ERP &  49.9 &   1.19 &   2.875 \\ \cline{3-6}
+													 &                        & CMP &  50.9 &   1.11 &   2.245 \\ \hline
 	
-	\pagebreak \hline
 	\multirow{4}{*}{FM} & \multirow{2}{*}{dubstep\_dance}   & ERP &  32.9 &   6.14 &   2.771 \\ \cline{3-6}
-	&                          & CMP &  38.0 &   6.28 &   2.516 \\ \cline{2-6}
-	& \multirow{2}{*}{rhinos}                            & ERP &  38.5 &   0.71 &   3.799 \\ \cline{3-6}
-	&                   & CMP &  39.8 &   0.63 &   3.251 \\ \hline
+						&                          & CMP &  38.0 &   6.28 &   2.516 \\ \cline{2-6}
+						& \multirow{2}{*}{rhinos}                            & ERP &  38.5 &   0.71 &   3.799 \\ \cline{3-6}
+						&                   & CMP &  39.8 &   0.63 &   3.251 \\ \hline
 	
 	\multirow{4}{*}{HN} & \multirow{2}{*}{drone\_footage}   & ERP &  30.3 &   5.49 &   5.153 \\ \cline{3-6}
-	&                          & CMP &  37.2 &   5.80 &   4.334 \\ \cline{2-6}
-	& \multirow{2}{*}{petite\_anse}                      & ERP &  41.4 &   7.84 &   5.913 \\ \cline{3-6}
-	&                          & CMP &  39.4 &   7.50 &   4.919 \\ \hline
+						&                          & CMP &  37.2 &   5.80 &   4.334 \\ \cline{2-6}
+						& \multirow{2}{*}{petite\_anse}                      & ERP &  41.4 &   7.84 &   5.913 \\ \cline{3-6}
+						&                          & CMP &  39.4 &   7.50 &   4.919 \\ \hline
 	
 	\multirow{4}{*}{HS} & \multirow{2}{*}{cable\_cam}   & ERP &  49.7 &  17.54 &  18.790 \\ \cline{3-6}
-	&                      & CMP &  53.1 &  18.47 &  17.554 \\ \cline{2-6}
-	& \multirow{2}{*}{motorsports\_park}             & ERP &  35.6 &   8.15 &   3.545 \\ \cline{3-6}
-	&                      & CMP &  41.7 &   8.88 &   3.413 \\ \hline
+						&                      & CMP &  53.1 &  18.47 &  17.554 \\ \cline{2-6}
+						& \multirow{2}{*}{motorsports\_park}             & ERP &  35.6 &   8.15 &   3.545 \\ \cline{3-6}
+						&                      & CMP &  41.7 &   8.88 &   3.413 \\ \hline
 	
 	\multirow{4}{*}{HM} & \multirow{2}{*}{chariot\_race}    & ERP &  39.1 &  16.87 &   8.034 \\ \cline{3-6}
-	&                          & CMP &  44.8 &  18.99 &   7.519 \\ \cline{2-6}
-	& \multirow{2}{*}{nyc\_drive}                        & ERP &  82.7 &  24.59 &  12.176 \\ \cline{3-6}
-	&                          & CMP &  92.7 &  27.72 &  11.565 \\ \hline
+						&                          & CMP &  44.8 &  18.99 &   7.519 \\ \cline{2-6}
+						& \multirow{2}{*}{nyc\_drive}                        & ERP &  82.7 &  24.59 &  12.176 \\ \cline{3-6}
+						&                          & CMP &  92.7 &  27.72 &  11.565 \\ \hline
 	
 	\multirow{4}{*}{VN} & \multirow{2}{*}{elevator\_lift}   & ERP &  52.9 &   8.46 &   2.325 \\ \cline{3-6}
-	&                          & CMP &  60.3 &   9.59 &   2.100 \\ \cline{2-6}
-	& \multirow{2}{*}{glass\_elevator}                   & ERP &  74.6 &   9.08 &   5.432 \\ \cline{3-6}
-	&                          & CMP &  82.1 &  11.82 &   5.974 \\ \hline
+						&                          & CMP &  60.3 &   9.59 &   2.100 \\ \cline{2-6}
+						& \multirow{2}{*}{glass\_elevator}                   & ERP &  74.6 &   9.08 &   5.432 \\ \cline{3-6}
+						&                          & CMP &  82.1 &  11.82 &   5.974 \\ \hline
 	
 	\multirow{4}{*}{VM} & \multirow{2}{*}{drone\_video} & ERP &  77.0 &  15.73 &   7.831 \\ \cline{3-6}
-	&                      & CMP &  84.5 &  18.58 &   7.431 \\ \cline{2-6}
-	& \multirow{2}{*}{drop\_tower}                   & ERP &  41.0 &   4.95 &   3.141 \\ \cline{3-6}
-	&                      & CMP &  45.0 &   4.27 &   2.839 \\ \hline
+						&                      & CMP &  84.5 &  18.58 &   7.431 \\ \cline{2-6}
+						& \multirow{2}{*}{drop\_tower}                   & ERP &  41.0 &   4.95 &   3.141 \\ \cline{3-6}
+						&                      & CMP &  45.0 &   4.27 &   2.839 \\ \hline
 	
 	\multirow{4}{*}{RN} & \multirow{2}{*}{video\_19}    & ERP &  44.7 &   7.80 &   1.310 \\ \cline{3-6}
-	&                      & CMP &  48.8 &   9.01 &   1.645 \\ \cline{2-6}
-	& \multirow{2}{*}{video\_20}                     & ERP &  31.8 &   5.36 &   0.787 \\ \cline{3-6}
-	&                      & CMP &  36.8 &   6.03 &   0.925 \\ \hline
+						&                      & CMP &  48.8 &   9.01 &   1.645 \\ \cline{2-6}
+						& \multirow{2}{*}{video\_20}                     & ERP &  31.8 &   5.36 &   0.787 \\ \cline{3-6}
+						&                      & CMP &  36.8 &   6.03 &   0.925 \\ \hline
 	
 	\multirow{4}{*}{RS} & \multirow{2}{*}{penthouse}    & ERP &  42.2 &   1.56 &   1.421 \\ \cline{3-6}
-	&                      & CMP &  48.3 &   1.61 &   1.458 \\ \cline{2-6}
-	& \multirow{2}{*}{video\_22}                     & ERP &  34.7 &   5.59 &   1.055 \\ \cline{3-6}
-	&                      & CMP &  40.6 &   6.56 &   1.166 \\ \hline
+						&                      & CMP &  48.3 &   1.61 &   1.458 \\ \cline{2-6}
+						& \multirow{2}{*}{video\_22}                     & ERP &  34.7 &   5.59 &   1.055 \\ \cline{3-6}
+						&                      & CMP &  40.6 &   6.56 &   1.166 \\ \hline
 	
 	\multirow{4}{*}{RM} & \multirow{2}{*}{video\_23}    & ERP &  45.6 &  10.95 &   3.398 \\ \cline{3-6}
-	&                      & CMP &  49.7 &  12.28 &   3.231 \\ \cline{2-6}
-	& \multirow{2}{*}{video\_24}                     & ERP &  41.8 &   9.43 &   1.802 \\ \cline{3-6}
-	&                      & CMP &  48.7 &  11.11 &   2.097 \\ \hline
+						&                      & CMP &  49.7 &  12.28 &   3.231 \\ \cline{2-6}
+						& \multirow{2}{*}{video\_24}                     & ERP &  41.8 &   9.43 &   1.802 \\ \cline{3-6}
+						&                      & CMP &  48.7 &  11.11 &   2.097 \\ \hline
 	
 	\multirow{4}{*}{MN} & \multirow{2}{*}{angel\_falls} & ERP &  24.3 &   1.89 &   2.690 \\ \cline{3-6}
-	&                      & CMP &  24.2 &   1.95 &   2.233 \\\cline{2-6}
-	& \multirow{2}{*}{three\_peaks}                  & ERP &  25.9 &   3.30 &   1.693 \\ \cline{3-6}
-	&                      & CMP &  30.4 &   3.06 &   1.473 \\ \hline
+						&                      & CMP &  24.2 &   1.95 &   2.233 \\\cline{2-6}
+						& \multirow{2}{*}{three\_peaks}                  & ERP &  25.9 &   3.30 &   1.693 \\ \cline{3-6}
+						&                      & CMP &  30.4 &   3.06 &   1.473 \\ \hline
 	
 	\multirow{4}{*}{MS} & \multirow{2}{*}{drone\_chases\_car}   & ERP &  28.9 &  12.10 &   5.839 \\ \cline{3-6}
-	&                              & CMP &  29.6 &  13.12 &   5.251 \\ \cline{2-6}
-	& \multirow{2}{*}{wingsuit\_dubai}                       & ERP &  68.8 &  18.98 &  10.012 \\ \cline{3-6}
-	&                              & CMP &  66.8 &  16.86 &   7.881 \\ \hline
+						&                              & CMP &  29.6 &  13.12 &   5.251 \\ \cline{2-6}
+						& \multirow{2}{*}{wingsuit\_dubai}                       & ERP &  68.8 &  18.98 &  10.012 \\ \cline{3-6}
+						&                              & CMP &  66.8 &  16.86 &   7.881 \\ \hline
 	
-	
-	\pagebreak \hline
 	\multirow{4}{*}{MM} & \multirow{2}{*}{blue\_angels} & ERP &  41.2 &   6.65 &   3.766 \\ \cline{3-6}
-	&                      & CMP &  42.7 &   6.94 &   3.520 \\ \cline{2-6}
-	& \multirow{2}{*}{pac\_man}                      & ERP &  23.2 &   6.36 &   1.262 \\ \cline{3-6}
-	&                      & CMP &  28.4 &   7.14 &   1.193 \\
+						&                      & CMP &  42.7 &   6.94 &   3.520 \\ \cline{2-6}
+						& \multirow{2}{*}{pac\_man}                      & ERP &  23.2 &   6.36 &   1.262 \\ \cline{3-6}
+						&                      & CMP &  28.4 &   7.14 &   1.193 \\
 \end{longtable}
 
 
