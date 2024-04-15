@@ -7,3 +7,6 @@
 *.brf
 *.blg
 *.gz
+*.synctex(busy)
+*.bbl
+*.toc
