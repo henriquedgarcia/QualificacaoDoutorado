@@ -4,6 +4,13 @@
 
 A recente divulgação do novo óculos de realidade virtual (em inglês HMD - Head Mounted Display) da Apple impulsiona mais uma vez o mercado de aplicações de realidade virtual (em inglês VR - Virtual Reality), juntando-se a dispositivos como o popular Oculus Meta Quest 3 da Meta. Além destes dispositivos tudo-em-um, é possível utilizar o próprio celular acoplado em um suporte especial na cabeça, como o Google Cardboard e o Samsung GearVR, para facilmente usufruir de aplicações VR, como jogos e vídeos 3D e esféricos. De todas as aplicações, o tráfego de vídeo esférico é um dos mais exigentes em termos de largura de banda. Nesta aplicação, o vídeo é reproduzido na casca interna de uma esfera e o usuário é posto no centro. Usando informações dos sensores de movimento do HMD, o usuário tem liberdade para olhar ao redor movendo a cabeça em três graus de liberdade enquanto o HMD exibe o vídeo em uma janela de visualização. 
 
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=0.49\columnwidth]{fig/viewport.pdf}
+	\caption{(a) Viewport em um streaming monolítico: desperdício ao requisitar pixels não vistos (em vermelho). (b) Um vídeo ladrilhado no formato $4 \times 4$ com região de interesse (em verde) e viewport.}
+	\label{fig:viewport2}
+\end{figure}
+
 De acordo com~\cite{Zhou2017, Liu2017}, o streaming de vídeos esféricos em empresas como YouTube e Facebook depende da arquitetura tradicional de streaming de vídeo 2D, onde o vídeo esférico é primeiro projetado em um plano, comprimido com codificadores como H.264 ou VP9 e transmitidos usando protocolos com o Dynamic Adaptive Streaming over HTTP (DASH) que disponibiliza segmentos do vídeo de duração constante codificados em diversas qualidades diferentes. Então, analisando o buffer e/ou a largura de banda disponível, o cliente poderá solicitar a representação do vídeo que executa em seu dispositívo com a maior qualidade. 
 
 No entanto, ao contrário dos vídeos 2D, um usuário pode visualizar apenas uma fração de todo o vídeo esférico devido à limitação do campo de visão humano (FOV). Conforme mostrado na Figura~\ref{fig:viewport}(a), a região do vídeo correspondente ao que é exibido no HMD é chamada Viewport e todos os pixels fora desta região não serão visualizados pelo usuário. Dependendo do fabricante do HMD o FOV pode variar, mas geralmente possui $\times90^{\circ}$ de abertura vertical e de $120^{\circ}$ a $90^{\circ}$ de abertura horizontal, o que corresponde a aproximadamente apenas 16\% da esfera~\cite{Afzal2017}. Assim, para garantir qualidade no Head Mounted Display (HMD), a projeção deve ser codificada em Ultra Alta Definição (UHD), como 4K (2160 linhas), exigindo grande capacidade de processamento e armazenamento. Da mesma forma, transmitir toda a projeção pode desperdiçar diversos recursos do sistema como largura de banda, tempo de processamento, memória, bateria, etc. Além disso, os algoritmos de Adaptação da Taxa de Bits (do inglês ABR - Adaptive Bitrate) do protocolo DASH se utiliza destes recursos para determinar a qualidade do vídeo. Caso não haja recursos suficientes o algoritmo tende a reduzir a qualidade do vídeo para conseguir manter a reprodução do vídeo constante.
@@ -353,8 +360,7 @@ O fluxo de trabalho da caracterização é visto na figura~\ref{fig:fluxograma1}
 
 \begin{figure}
         \centering
-        % \includegraphics[width=0.7\linewidth]{fig/Fluxograma1}
-        \\includesvg[width=0.7\linewidth]{fig/Fluxograma1.svg}
+        \includegraphics[width=0.7\linewidth]{fig/Fluxograma1.pdf}
         \caption{Fluxograma para captura de métricas de desempenho.}
         \label{fig:fluxograma1}
 \end{figure}
