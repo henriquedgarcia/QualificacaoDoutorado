@@ -46,14 +46,123 @@ O restante deste estudo está organizado da seguinte forma: No Capítulo 2, é r
 
 
 
-\chapter{Modelagem do sistema: 360 video streaming}\label{Cap:Problem Design}
-\section{O vídeo esférico}
+\chapter{Modelagem do sistema de streaming adaptativo de vídeo esférico com ladrilhos}\label{Cap:Problem Design}
 
-O video esférico, diferente do vídeo tradicional plano, é um tipo de vídeo que pode ser projetado na casca interna de uma esfera, onde o usuário, localizado no centro, possui três graus de liberdade para olhar ao redor movimentando a cabeça. A captura do vídeo começa em um arranjo de câmeras tradicionais que captura o ambiente ao redor. As várias imagens das câmeras são sincronizadas e costuradas em uma esfera formando uma única imagem. Para utilizar os codificadores de vídeo populares como HEVC, AV1, VP9, etc, o vídeo precisa ser mapeado em um plano através de técnicas de projeção cartográficas, como a projeção equirretangular (ERP) e projeção cubemap (CMP) para ser comprimido, encapsulados em arquivos MP4, por exemplo e armazenados ou transmitidos pela rede. Desta forma, para poder manipular os pixels no domínio da projeção e da esfera, extrair o viewport e calcular a qualidade do vídeo, foi necessário desenvolver uma nova biblioteca chamada video360tools\footnote{https://github.com/henriquedgarcia/video360utils} que realiza o mapeamento ente diferentes sistemas coordenadas para as projeções equirretangular e cubemap. Para isto foi definido a relação entre os sistemas de coordenadas cartesiano, horizontal e sistema de coordenadas de corpo conforme descrito a seguir.
+No vídeo esférico, diferente do vídeo tradicional que é plano, os quadros do vídeo são projetados no interior de uma esfera 3D, onde o usuário, localizado no centro, possui três graus de liberdade para olhar ao redor movimentando a cabeça. A figura XXXX mostra o diagrama geral do streaming de vídeo esférico com ladrilhos. Primeiramente, para comprimir o vídeo, a esfera é mapeada um plano através de técnicas de projeção cartográficas, como mostra a figura~\ref{fig:streaming---client-side-and-server-side}. Cada etapa deste diagrama será explicado nas seções a seguir.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{"fig/Streaming - client-side and server-side.pdf"}
+	\caption{Sistema de streaming de vídeo esférico.}
+	\label{fig:streaming---client-side-and-server-side}
+\end{figure}
+
+
+\section{Projeção}
+
+Projeções são um tipo de mapeamento entre dois espaços vetoriais. No caso, a esfera, descrita no plano cartesiano de três dimensões é mapeada em um plano bidimencional representado pela imagem. Estas técnicas são muito conhecidas no ambiente de desenvolvimento de modelagem objetos 3D em aplicações como Blender, Unreal e Unity para armazenamento de texturas em arquivos de imagem tradicionais. Ao desenhar o objeto 3D na tela, o motor gráfico busca os pixels correspondentes na imagem. As projeções mais comuns são a projeção equirretangular (ERP) e a projeção Cubemap. 
+
+\subsubsection{Projeção Equirretangular}
+
+A projeção equirretangular é uma técnica de mapeamento cartográfico de uma esfera para um plano retangular, preservando a proporção dos pixels, mas distorcendo a imagem. Isto é, quando mais próximo dos polos, os pixels diminuem a altura enquanto aumentam sua largura. Isto produz fortes deformações na região próxima aos polos, mas como os usuários tendem a manter o olhar a altura do horizonte, a maior parte do conteúdo do vídeo é facilmente visualizado. A figura~\ref{fig:erp} apresenta como é feita a projeção.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.8\textwidth]{fig/erp.png}
+	\caption{Projeção Equirretangular mapeada no plano da imagem.}
+	\label{fig:erp}
+\end{figure}
+
+No mapeamento de um vídeo 360° usando a projeção equirretangular, a esfera do vídeo é desdobrada em um plano 2D retangular, onde cada ponto na esfera é mapeado para um pixel correspondente na imagem retangular. Primeiro, a posição do pixel na esfera em coordenadas cartesianas é convertido para o sistema de coordenadas horizontal usando as equações~\ref{eq:cart2hcs}. Em seguida, as coordenadas são normalizadas em um plano uv onde u e v variam de 0 a 1, o eixo u aponta para a direita e o eixo v aponta para baixo usando as equações~\ref{eq:hcs2erp}. Por fim as coordenadas $(m, n)$ na imagem são dadas multiplicando $u$ e $v$ pela largura ($W$) e altura ($H$) da  imagem, respectivamente. O truncamento é realizado afim de se aplicar a interpolação por vizinho mais próximo.
+
+\begin{align}
+	u &= \dfrac{\text{Azimute}}{2\pi} + 0.5 \\
+	v &= \dfrac{-\text{Elevação}}{\pi} + 0.5 \\
+	\label{eq:hcs2erp}
+\end{align}
+
+
+Em seguida, a projeção é segmentada espacialmente em vídeos independentes de tamanhos iguais.
+codificadores como H.265 ou AV1 transformam esta projeção em um fluxo de bits que são armazenados em arquivos contêineres como MP4. Estes arquivos podem ser armazenados ou transmitidos
+
+
+\begin{table}[h]
+	\centering
+	\caption{Detalhes do ladrilhamento e resoluções resultantes.}
+	\label{tab:ladrilhamento_resolucoes}
+	\begin{tabular}{|c|p{2.5cm}|c|p{2.5cm}|c}
+		\cline{1-4}
+		\textbf{Ladrilhamento} & \centering\textbf{Quantidade de ladrilhos} & \textbf{Projeção} & \centering \textbf{Pixels por ladrilho} & \\ \cline{1-4}
+		\multirow{2}{*}{\textbf{1x1}} & \centering\multirow{2}{*}{1} & CMP & \centering 4320x2160 & \\ \cline{3-4} 
+		&   & ERP & \centering 3240x2160 & \\ \cline{1-4}
+		\multirow{2}{*}{\textbf{3x2}} & \centering \multirow{2}{*}{6} & CMP & \centering 1440x1080 & \\ \cline{3-4} 
+		&   & ERP & \centering 1080x1080 & \\ \cline{1-4}
+		\multirow{2}{*}{\textbf{6x4}} & \centering \multirow{2}{*}{24} & CMP & \centering 720x540 & \\ \cline{3-4} 
+		&   & ERP & \centering 540x540 & \\ \cline{1-4}
+		\multirow{2}{*}{\textbf{9x6}} & \centering \multirow{2}{*}{54} & CMP & \centering 480x360 & \\ \cline{3-4} 
+		&   & ERP & \centering 360x360  & \\ \cline{1-4}
+		\multirow{2}{*}{\textbf{ 12x8}} & \centering \multirow{2}{*}{96} & CMP & \centering 360x270 & \\ \cline{3-4} 
+		&    & ERP & \centering 270x270 & \\ \cline{1-4}
+	\end{tabular}
+\end{table}
+
+
+As projeções mais comuns são a projeção equirretangular (ERP) e projeção cubemap (CMP)., encapsulados em arquivos MP4, por exemplo e armazenados ou transmitidos pela rede. Desta forma, para poder manipular os pixels no domínio da projeção e da esfera, extrair o viewport e calcular a qualidade do vídeo, foi necessário desenvolver uma nova biblioteca chamada video360tools\footnote{https://github.com/henriquedgarcia/video360utils} que realiza o mapeamento ente diferentes sistemas coordenadas para as projeções equirretangular e cubemap. Para isto foi definido a relação entre os sistemas de coordenadas cartesiano, horizontal e sistema de coordenadas de corpo conforme descrito a seguir.
+
+
+\subsubsection{Projeção Cubemap}
+
+A projeção cubemap é outra técnica comumente usada em vídeos 360° para mapear um ambiente tridimensional em uma representação bidimensional, atualmente adotado pelo Youtube e pelo Facebook. Ao contrário da projeção equirretangular, que mapeia a esfera em um plano retangular, a projeção cubemap mapeia a esfera em seis faces quadradas de um cubo de lado igual a 2. As seis faces correspondem a visão ao redor do ponto de captura. As faces geralmente são organizadas em uma grade de 3x2 formando um único arquivo de imagem. As três imagens superiores são as faces da esquerda, frente e direita, Enquanto as faces de baixo são rotacionadas 90° em sentido horário e correspondem as faces de cima, de trás e de baixo. A figura~\ref{fig:cmp} mostra um exemplo de mapeamento para projeção Cubemap (CMP).
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.8\textwidth]{fig/cmp.png}
+	\caption{Projeção Cubemap e a disposição das seis faces no plano da imagem.}
+	\label{fig:cmp}
+\end{figure}
+
+Como forma de representação auxiliar, cada face é mapeada em um plano $uv$ conforme a tabela~\ref{tab:uv_erp}, onde as coordenadas $u$ e $v$ variam de -1 a +1, com $u$ apontando para direita e $v$ apontando para baixo. Por fim, as coordenadas $uv$ são convertidas para posições dos pixels pela equação $ (uv+1)\times \frac{A}{2}-0.5$, onde A é o número de pixels em uma face do quadrado, e reposicionado na imagem. O processo inverso, de mapeamento do plano uv para o espaço cartesiano é feito pela tabela~\ref{tab:uv_erp}.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Tabela de coordenadas $(X, Y, Z)$ em função de $(U, V)$}
+	\label{tab:uv_erp}
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		\textbf{Face} & \textbf{X} & \textbf{Y} & \textbf{Z} \\
+		\hline
+		0 & $-1.0$ & $v$    & $u$    \\
+		1 & $u$    & $v$    & $1.0$  \\
+		2 & $1.0$  & $v$    & $-u$   \\
+		3 & $-u$   & $1.0$  & $v$    \\
+		4 & $-u$   & $v$    & $-1.0$ \\
+		5 & $-u$   & $-1.0$ & $-v$   \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\centering
+	\caption{Tabela de condições e valores de \( face, u, v \) em função de $(X, Y, V)$}
+	\label{tab:condicoes}
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		\textbf{Condição} & \textbf{Face} & \textbf{u} & \textbf{v} \\
+		\hline
+		$ |X| \geq |Z|  \text{ e }  |X| \geq |Y|  \text{ e }  X < 0 $ & 0 &  $\frac{Z}{|X|}$ & $ \frac{Y}{|X|} $ \\
+		$ |Z| \geq |X|  \text{ e }  |Z| \geq |Y|  \text{ e }  Z > 0 $ & 1 &  $\frac{X}{|Z|}$ & $ \frac{Y}{|Z|} $ \\
+		$ |X| \geq |Z|  \text{ e }  |X| \geq |Y|  \text{ e }  X > 0 $ & 2 &  $\frac{-Z}{|X|}$  & $ \frac{Y}{|X|} $ \\
+		$ |Y| \geq |X|  \text{ e }  |Y| \geq |Z|  \text{ e }  Y < 0 $ & 3 &  $\frac{-X}{|Y|} $ & $ \frac{Z}{|Y|} $ \\
+		$ |Z| \geq |X|  \text{ e }  |Z| \geq |Y|  \text{ e }  Z < 0 $ & 4 &  $\frac{-X}{|Z|}$  & $ \frac{Y}{|Z|} $ \\
+		$ |Y| \geq |X|  \text{ e }  |Y| \geq |Z|  \text{ e }  Y > 0 $ & 5 &  $\frac{-X}{|Y|}$  & $ \frac{-Z}{|Y|} $ \\
+		\hline
+	\end{tabular}
+\end{table}
+
 
 \subsection{video360tools}
 
-O sistema de coordenadas cartesiano, dextrógiro, representado na figura~\ref{fig:coordenadas} é usado para descrever e operar a esfera no espaço de 3 dimensões através de operações de álgebra linear. O vídeo esférico é representado com o usuário no centro de uma esfera de raio 1. Na posição inicial, o eixo Z aponta para a frente, o eixo X aponta para a direita e o eixo Y aponta para baixo. Como o campo de visão do usuário é limitado pelo sistema visual humano, ele visualiza apenas uma parte da esfera, chamada de Viewport.
+O sistema de coordenadas cartesiano, dextrogiro, representado na figura~\ref{fig:coordenadas} é usado para descrever e operar a esfera no espaço de 3 dimensões através de operações de álgebra linear. O vídeo esférico é representado com o usuário no centro de uma esfera de raio 1. Na posição inicial, o eixo Z aponta para a frente, o eixo X aponta para a direita e o eixo Y aponta para baixo. Como o campo de visão do usuário é limitado pelo sistema visual humano, ele visualiza apenas uma parte da esfera, chamada de Viewport.
 
 \begin{figure}[htbp]
         \centering
@@ -135,74 +244,6 @@ As matrizes individuais são:
 
 \subsection{Projeções}
 
-\subsubsection{Projeção Equirretangular}
-
-A projeção equirretangular é uma técnica de mapeamento cartográfico de uma esfera para um plano retangular, preservando a proporção dos elementos na imagem, ou seja, os pixels na imagem mapeada têm uma relação de aspecto constante. Isso significa que a imagem resultante tem a mesma largura para altura em todos os pontos, o que simplifica sua representação digital e facilita o processo de visualização em plataformas de vídeo e dispositivos, como mostra a figura~\ref{fig:erp}.
-
-
-\begin{figure}
-        \centering
-        \includegraphics[width=0.8\textwidth]{fig/erp.png}
-        \caption{Projeção Equirretangular mapeada no plano da imagem.}
-        \label{fig:erp}
-\end{figure}
-
-No mapeamento de um vídeo 360° usando a projeção equirretangular, a esfera do vídeo é desdobrada em um plano 2D retangular, onde cada ponto na esfera é mapeado para um ponto correspondente na imagem retangular. Primeiro, a posição do pixel na esfera em coordenadas cartesianas é convertido para o sistema de coordenadas horizontal usando as equações~\ref{eq:cart2hcs}. Em seguida, as coordenadas são normalizadas em um plano uv onde u e v variam de 0 a 1, o eixo u aponta para a direita e o eixo v aponta para baixo usando as equações~\ref{eq:hcs2erp}. Por fim as coordenadas $(m, n)$ na imagem são dadas multiplicando $u$ e $v$ pela largura ($W$) e altura ($H$) da  imagem, respectivamente. O truncamento é realizado afim de se aplicar a interpolação por vizinho mais próximo.
-
-\begin{align}
-        u &= \dfrac{\text{Azimute}}{2\pi} + 0.5 \\
-        v &= \dfrac{-\text{Elevação}}{\pi} + 0.5 \\
-        \label{eq:hcs2erp}
-\end{align}
-
-\subsubsection{Projeção Cubemap}
-
-A projeção cubemap é outra técnica comumente usada em vídeos 360° para mapear um ambiente tridimensional em uma representação bidimensional, atualmente adotado pelo Youtube e pelo Facebook. Ao contrário da projeção equirretangular, que mapeia a esfera em um plano retangular, a projeção cubemap mapeia a esfera em seis faces quadradas de um cubo de lado igual a 2. As seis faces correspondem a visão ao redor do ponto de captura. As faces geralmente são organizadas em uma grade de 3x2 formando um único arquivo de imagem. As três imagens superiores são as faces da esquerda, frente e direita, Enquanto as faces de baixo são rotacionadas 90° em sentido horário e correspondem as faces de cima, de trás e de baixo. A figura~\ref{fig:cmp} mostra um exemplo de mapeamento para projeção Cubemap (CMP).
-
-\begin{figure}
-        \centering
-        \includegraphics[width=0.8\textwidth]{fig/cmp.png}
-        \caption{Projeção Cubemap e a disposição das seis faces no plano da imagem.}
-        \label{fig:cmp}
-\end{figure}
-
-Como forma de representação auxiliar, cada face é mapeada em um plano $uv$ conforme a tabela~\ref{tab:uv_erp}, onde as coordenadas $u$ e $v$ variam de -1 a +1, com $u$ apontando para direita e $v$ apontando para baixo. Por fim, as coordenadas $uv$ são convertidas para posições dos pixels pela equação $ (uv+1)\times \frac{A}{2}-0.5$, onde A é o número de pixels em uma face do quadrado, e reposicionado na imagem. O processo inverso, de mapeamento do plano uv para o espaço cartesiano é feito pela tabela~\ref{tab:uv_erp}.
-
-\begin{table}[htbp]
-        \centering
-        \caption{Tabela de coordenadas $(X, Y, Z)$ em função de $(U, V)$}
-        \label{tab:uv_erp}
-        \begin{tabular}{|c|c|c|c|}
-                \hline
-                \textbf{Face} & \textbf{X} & \textbf{Y} & \textbf{Z} \\
-                \hline
-                0 & $-1.0$ & $v$    & $u$    \\
-                1 & $u$    & $v$    & $1.0$  \\
-                2 & $1.0$  & $v$    & $-u$   \\
-                3 & $-u$   & $1.0$  & $v$    \\
-                4 & $-u$   & $v$    & $-1.0$ \\
-                5 & $-u$   & $-1.0$ & $-v$   \\
-                \hline
-        \end{tabular}
-\end{table}
-
-\begin{table}[htbp]
-        \centering
-        \caption{Tabela de condições e valores de \( face, u, v \) em função de $(X, Y, V)$}
-        \label{tab:condicoes}
-        \begin{tabular}{|c|c|c|c|}
-                \hline
-                \textbf{Condição} & \textbf{Face} & \textbf{u} & \textbf{v} \\
-                \hline
-                $ |X| \geq |Z|  \text{ e }  |X| \geq |Y|  \text{ e }  X < 0 $ & 0 &  $\frac{Z}{|X|}$ & $ \frac{Y}{|X|} $ \\
-                $ |Z| \geq |X|  \text{ e }  |Z| \geq |Y|  \text{ e }  Z > 0 $ & 1 &  $\frac{X}{|Z|}$ & $ \frac{Y}{|Z|} $ \\
-                $ |X| \geq |Z|  \text{ e }  |X| \geq |Y|  \text{ e }  X > 0 $ & 2 &  $\frac{-Z}{|X|}$  & $ \frac{Y}{|X|} $ \\
-                $ |Y| \geq |X|  \text{ e }  |Y| \geq |Z|  \text{ e }  Y < 0 $ & 3 &  $\frac{-X}{|Y|} $ & $ \frac{Z}{|Y|} $ \\
-                $ |Z| \geq |X|  \text{ e }  |Z| \geq |Y|  \text{ e }  Z < 0 $ & 4 &  $\frac{-X}{|Z|}$  & $ \frac{Y}{|Z|} $ \\
-                $ |Y| \geq |X|  \text{ e }  |Y| \geq |Z|  \text{ e }  Y > 0 $ & 5 &  $\frac{-X}{|Y|}$  & $ \frac{-Z}{|Y|} $ \\
-                \hline
-        \end{tabular}
-\end{table}
 
 \subsection{O Viewport}
 
@@ -477,25 +518,6 @@ Examinando o gráfico de dispersão de SI e TI na Figura~\ref{fig:scatter_si_ti}
 
 Para replicar uma condição comparável DASH-SRD, os ladrilho passaram pelo ladrilhamento antes da codificação, garantindo que cada ladrilho fosse espacialmente independente. Para cada vídeo, geramos quatro novas sequências de vídeo, cada uma com padrões de os ladrilhos conforme a tabela~\ref{tab:ladrilhamento_resolucoes}. Quanto maior o numero de ladrilhos, menor o numero de pixel em cada ladrilho, reduzindo o espaço de busca do compensador de movimento do codificador e reduzindo a eficiência da compressão. A projeção cúbica, tendo proporção menor tende a ser uma representação mais compacta, apresentando menor taxa de bits, porém com maior complexidade de compressão. Apesar de quanto menor os ladrilhos, menos pixels não visto são processador, este procedimento produz redução na eficiência do codificador. Além disso, quanto mais ladrilhos forem solicitados, serão necessárias múltiplas instâncias de um decodificador no cliente e mais complexo será o processo, pois para reproduzir um único quadro do ladrilho, todo o chunk precisa ser decodificado.
 
-\begin{table}[h]
-        \centering
-        \caption{Detalhes do ladrilhamento e resoluções resultantes.}
-        \label{tab:ladrilhamento_resolucoes}
-        \begin{tabular}{|c|p{2.5cm}|c|p{2.5cm}|c}
-                \cline{1-4}
-                \textbf{Ladrilhamento} & \centering\textbf{Quantidade de ladrilhos} & \textbf{Projeção} & \centering \textbf{Pixels por ladrilho} & \\ \cline{1-4}
-                \multirow{2}{*}{\textbf{1x1}} & \centering\multirow{2}{*}{1} & CMP & \centering 4320x2160 & \\ \cline{3-4} 
-                &   & ERP & \centering 3240x2160 & \\ \cline{1-4}
-                \multirow{2}{*}{\textbf{3x2}} & \centering \multirow{2}{*}{6} & CMP & \centering 1440x1080 & \\ \cline{3-4} 
-                &   & ERP & \centering 1080x1080 & \\ \cline{1-4}
-                \multirow{2}{*}{\textbf{6x4}} & \centering \multirow{2}{*}{24} & CMP & \centering 720x540 & \\ \cline{3-4} 
-                &   & ERP & \centering 540x540 & \\ \cline{1-4}
-                \multirow{2}{*}{\textbf{9x6}} & \centering \multirow{2}{*}{54} & CMP & \centering 480x360 & \\ \cline{3-4} 
-                &   & ERP & \centering 360x360  & \\ \cline{1-4}
-                \multirow{2}{*}{\textbf{ 12x8}} & \centering \multirow{2}{*}{96} & CMP & \centering 360x270 & \\ \cline{3-4} 
-                &    & ERP & \centering 270x270 & \\ \cline{1-4}
-        \end{tabular}
-\end{table}
 
 Subsequentemente, utilizamos o codificador HEVC x265 no FFmpeg\footnote{https://ffmpeg.org/} para padronizar e codificar cada ladrilho, empregando seis valores distintos do Fator de Taxa Constante (CRF) para controlar a qualidade/taxa de bits: 16, 22, 28, 34, 40 e 46. O valor de CRF mais baixo (mais alto) de 16 (46) corresponde à maior (menor) qualidade de vídeo. O valor padrão de 28 é recomendado pelo codificador por seu equilíbrio entre qualidade e taxa de compressão. Vale ressaltar que cada incremento de 3 no valor de CRF resulta em uma redução pela metade na taxa de bits; em nosso conjunto, a taxa de bits diminui quatro vezes para os valores de CRF especificados. Os parâmetros de codificação do vídeo estão detalhados na Tabela \ref{tab:parametros_qlt}. O GOP do vídeo foi fixado em 30 quadros, o parâmetro para detecção de cortes de cena foi desativado para que o GOP não varie dentro de um chunk e o parâmetro "--no-info" foi utilizado para omitir cerca de 200 bytes de informações sobre o codificador no cabeçalho mp4 e assim reduzir o overhead dos vídeos. Esta quantidade é relativamente significativa quando se trata de chunks muito pequenos com baixa complexidade de codificação e alta compressão. Além disso os vídeos foram processados com os parâmetros "-tune psnr" para comparação mais precisa das métricas de distorção, como MSE e PSNR. 
 
