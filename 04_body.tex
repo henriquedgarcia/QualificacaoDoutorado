@@ -2,39 +2,54 @@
 
 % \section{Motivation}
 
-A recente divulgação do novo óculos de realidade virtual (em inglês HMD - Head Mounted Display) da Apple impulsiona mais uma vez o mercado de aplicações de realidade virtual (em inglês VR - Virtual Reality), juntando-se a dispositivos como o popular Oculus Meta Quest 3 da Meta. Além destes dispositivos tudo-em-um, é possível utilizar o próprio celular acoplado em um suporte especial na cabeça, como o Google Cardboard e o Samsung GearVR, para facilmente usufruir de aplicações VR, como jogos e vídeos 3D e esféricos. De todas as aplicações, o tráfego de vídeo esférico é um dos mais exigentes em termos de largura de banda. Como apresentado na figura~\ref{fig:viewport2}, os vídeos esféricos (ou vídeo 360°) são reproduzidos na casca interna de uma esfera e o usuário é posto no centro. Usando informações dos sensores de movimento do HMD, o usuário tem liberdade para olhar ao redor movendo a cabeça em três graus de liberdade enquanto o HMD exibe o vídeo em uma janela de visualização chamada viewport. 
+Streaming de vídeo esféricos, ou vídeos 360°, é uma relativamente nova aplicação multimídia para realiadade virtual (do inglês VR - Virtual Reality) que chamou muita atenção nos últimos anos com a população dos óculos de realidade virtual, também conhecidos como visor de cabeça (do inglês HMD - Head Mounted Display) e o lançamento do Metaverso pela Meta. Como apresentado na figura~\ref{fig:video360}, os vídeos esféricos (ou vídeo 360°) são projetados e reproduzidos na casca interna de uma esfera e o usuário é posto no centro. Usando informações dos sensores de movimento do HMD, o usuário tem liberdade para olhar ao redor movendo a cabeça em três graus de liberdade enquanto o HMD exibe o vídeo em uma janela de visualização chamada viewport. Além dos HMD os vídeos esféricos também podem ser reproduzidos em dispositivos celulares, aplicativos desktop e navegadores web através do movimento do mouse. Esta facilidade permite que praticamente qualquer dispositivo reproduza os vídeos esféricos facilitando seu acesso.
 
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=0.8\columnwidth]{fig/viewport.pdf}
 	\caption{Em um vídeo esférico uma projeção é usada como textura de uma esfera 3D com o usuário no centro que poderá mover a cabeça e olhar ao redor usando seu HMD.}
-	\label{fig:viewport2}
+	\label{fig:video360}
 \end{figure}
 
-De acordo com~\cite{Zhou2017, Liu2017}, empresas como YouTube e Facebook ainda dependem da arquitetura tradicional de streaming de vídeo 2D para transmitir os vídeos esféricos. Inicialmente o vídeo é projetado em um plano, comprimido com codificadores como H.264 ou VP9 e disponibilizados através do manifestos de protocolos com o Dynamic Adaptive Streaming over HTTP (DASH) que disponibilizam segmentos de vídeo com duração constante, codificados sob diversas qualidades/taxas de bits diferentes. Então, analisando o buffer e/ou a largura de banda disponível, o cliente poderá solicitar a representação do vídeo que executa em seu dispositivo com a melhor qualidade. 
+De todas as aplicações para VR, o streaming de vídeo esférico é o que possui a maior taxa de bits, pois toda a projeção é transmitida em Ultra Alta Definição (do inglês UHD - Ultra High Definition). De acordo com~\cite{Zhou2017, Liu2017}, empresas como YouTube e Facebook usam a arquitetura tradicional de streaming de vídeo 2D para transmitir a projeção dos vídeos esféricos. Inicialmente a projeção é comprimida com H.264 ou VP9 e disponibilizados através do manifestos de protocolos com o Dynamic Adaptive Streaming over HTTP (DASH) que disponibilizam segmentos de vídeo com duração constante, codificados sob diversas qualidades/taxas de bits diferentes. Assim, analisando o buffer e/ou a largura de banda disponível, a aplicação cliente poderá mudar a qualidade da reprodução de acordo com a disponibilidade dos recursos do dispositivo. Por exemplo, o tocador do vídeo poderá reduzir a qualidade se a largura de banda disponível for reduzida ou se a bateria estiver acabando.
 
-No entanto, ao contrário dos vídeos 2D, um usuário pode visualizar apenas uma fração de todo o vídeo esférico devido à limitação do campo de visão humano (FOV). Conforme mostrado na Figura~\ref{fig:viewport}(a), a região do vídeo correspondente ao que é exibido no HMD é chamada Viewport e todos os pixels fora desta região não serão visualizados pelo usuário. Dependendo do fabricante do HMD o FOV pode variar, mas geralmente possui $\times90^{\circ}$ de abertura vertical e de $120^{\circ}$ a $90^{\circ}$ de abertura horizontal, o que corresponde a aproximadamente apenas 16\% da esfera~\cite{Afzal2017}. Assim, para garantir qualidade no Head Mounted Display (HMD), a projeção deve ser codificada em Ultra Alta Definição (UHD), como 4K (2160 linhas), exigindo grande capacidade de processamento e armazenamento. Da mesma forma, transmitir toda a projeção pode desperdiçar diversos recursos do sistema como largura de banda, tempo de processamento, memória, bateria, etc. Além disso, os algoritmos de Adaptação da Taxa de Bits (do inglês ABR - Adaptive Bitrate) do protocolo DASH se utiliza destes recursos para determinar a qualidade do vídeo. Caso não haja recursos suficientes o algoritmo tende a reduzir a qualidade do vídeo para conseguir manter a reprodução do vídeo constante.
-
+No entanto, ao contrário dos vídeos 2D, um usuário deve visualizar apenas uma fração de todo o vídeo esférico devido à limitação do campo de visão humano (FOV). Conforme mostrado na Figura~\ref{fig:viewport1}(a), a região do vídeo que é exibido no HMD é chamada viewport e todos os pixels fora desta região não serão visualizados pelo usuário. Dependendo do fabricante do HMD o FOV pode variar, mas geralmente possui $\times90^{\circ}$ de abertura vertical e de $120^{\circ}$ a $90^{\circ}$ de abertura horizontal, o que corresponde a aproximadamente 16\% da esfera~\cite{Afzal2017}. Por isso, para garantir boa qualidade exibida no HMD, a projeção deve ser codificada em alta resolução, resultando em arquivos muito grande e necessitando de tanta largura de banda quanto for a qualidade da codificação. 
 
 \begin{figure}[htb]
         \centering
-        \includegraphics[width=0.49\columnwidth]{fig/viewport1.png} \hfill
-        \includegraphics[width=0.49\columnwidth]{fig/viewport2.png} \\
-        \caption{(a) Viewport em um streaming monolítico: desperdício ao requisitar pixels não vistos (em vermelho). (b) Um vídeo ladrilhado no formato $4 \times 4$ com região de interesse (em verde) e viewport.}
-        \label{fig:viewport}
+        \includegraphics[width=0.80\columnwidth]{fig/viewport1.pdf}
+        \caption{Viewport em um streaming com ladrilhos: desperdício ao requisitar pixels não vistos (em vermelho).}
+        \label{fig:viewport1}
 \end{figure}
 
-Afim de economizar recursos, vários trabalhos~\cite{Alface2012, Zare2016, Qian2018, Liu2017, Graf2017, Xiao2018, Nasrabadi2019} sugerem uma abordagem baseada na segmentação espacial da projeção em vídeos independentes chamados ladrilhos, de modo que o cliente possa solicitar somente os ladrilhos em uma região de interesse (do inglês ROI - Region Of Interest) que serão vistos pelo usuário nos próximos segundos. A figura~\ref{fig:viewport}(b) apresenta esta abordagem utilizando um padrão de ladrilhamento $4 \times 4$. A ROI será todos os pixels cobertos pelos ladrilhos que tocam o viewport. Desta forma, somente os ladrilhos tocados pelo viewport poderão ser requisitados com maior qualidade, enquanto os ladrilhos não vistos serão transmitidos em baixa qualidade ou mesmo não serão transmitidos. 
+Desta forma, transmitir toda a projeção pode desperdiçar diversos recursos do sistema como largura de banda, tempo de processamento, bateria, etc. Dispositivos móveis tendem a sofrer mais com este tipo de aplicação que podem ter sua bateria drenada rapidamente e sofrer aquecimento, enquanto que a conexão móvel é limitada e mais cara. Além disso, os algoritmos de Adaptação da Taxa de Bits (do inglês ABR - Adaptive Bitrate) usados pelo protocolo DASH utilizam informações sobre estes recursos para determinar a qualidade do vídeo que deve ser solicitada ao servidor. Caso não haja recursos suficientes o algoritmo reduz a qualidade do vídeo para conseguir manter a reprodução do vídeo constante.
 
-Porém, a partir desta abordagem surgem vários novos desafios. Como os chunks do protocolo DASH possuem duração fixa de vários segundos e o usuário pode mover o viewport para fora do grupo de ladrilhos inicialmente vistos, é necessário prever o comportamento do usuário durante toda a duração do chunk. Uma predição de viewport errada solicitará um conjunto de chunks errados exigirá uma nova requisição dos ladrilhos faltantes, desperdiçando largura de banda e em alguns casos o vídeo poderá travar até que o chunk correto chegue, seja decodificado e desenhado na tela. O algoritmo ABR passa a ter que lidar com os erros de predição de viewport e outras restrições como por exemplo, não misturar ladrilhos de qualidades diferentes no viewport e a classificação das requisições dos ladrilhos em níveis de prioridade. Além disso, podemos observar que quanto maior a segmentação (e menor os ladrilhos), menos pixels ficarão fora do viewport. Porém, quanto menor o ladrilho, menor o espaço de busca do compensador de movimento dos codificadores, reduzindo a eficiência da compressão e, por fim, aumentando a taxa de bits. Além disso, a segmentação da projeção em ladrilhos independentes exigirá que o cliente utilize várias instâncias do decodificador trabalhando em paralelo. Desta forma, quanto maior o ladrilhamento, mais decodificadores serão necessários instanciar e mais tempo de processamento será utilizado. Esta condição se torna crítica em dispositivos móveis que possuem menos poder computacional, onde o uso massivo de processamento poderá drenar a bateria muito rápido além de causar aquecimento.
+Afim de economizar recursos, vários trabalhos~\cite{Alface2012, Zare2016, Qian2018, Liu2017, Graf2017, Xiao2018, Nasrabadi2019} sugerem uma abordagem baseada na segmentação espacial da projeção em vídeos independentes chamados ladrilhos, de modo que o cliente possa solicitar somente os ladrilhos em uma região de interesse (do inglês ROI - Region Of Interest) que serão vistos pelo usuário nos próximos segundos. A figura~\ref{fig:viewport2} apresenta esta abordagem utilizando um padrão de ladrilhamento $4 \times 4$. A ROI será todos os pixels cobertos pelos ladrilhos que tocam o viewport. Desta forma, somente os ladrilhos tocados pelo viewport poderão ser requisitados com maior qualidade, enquanto os ladrilhos não vistos serão transmitidos em baixa qualidade ou mesmo não serão transmitidos. 
 
-Diversas propostas foram feitas afim de lidar com a predição de viewport e a seleção de chunks, porém é muito difícil realizar a comparação do desempenho de cada abordagem devido a natureza interativa da comunicação cliente-servidor. Submeter grupos de degradações a diferentes usuários afim de avaliar a qualidade subjetiva é a abordagem mais recomendada afim de avaliar a qualidade subjetiva do vídeo esférico~\cite{ITU-ITU-TRecommendationP.9192020}. Porém, é muito difícil controlar o que o usuário verá, pois a cada reprodução do vídeo esférico com ladrilhos, os usuários terão um comportamento completamente diferente. Inclusive, se um vídeo for assistido por um mesmo usuário várias vezes, seu comportamento será diferente a cada reprodução. Cada ladrilho que foi codificado individualmente com a mesma qualidade visual possuirá diferentes taxas de bits dependendo do seu conteúdo e cada usuário solicitará um diferente conjunto de ladrilhos ao servidor dependendo de onde estará olhando e da velocidade de movimento da cabeça, que por sua vez requererá diferentes recursos do computador e passará a experimentar diferente qualidade de experiência (do inglês QoE - Quality of Experience). 
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=0.80\columnwidth]{fig/viewport2.pdf}
+	\caption{Um vídeo ladrilhado no formato $6 \times 4$ com região de interesse em verde. Apenas essa região é necessária para o viewport do usuário.}
+	\label{fig:viewport2}
+\end{figure}
 
-Afim de permitir a reprodutibilidade do comportamento do usuário sob diferentes algoritmos ABR e preditores de movimento de cabeça, este trabalho propõe um fluxo de trabalho e construção de um banco de dados com diversas métricas objetivas que poderão ser usadas para emular um sistema de transmissão de vídeo e replicar o comportamento dos usuários. A velocidade angular do movimento de cabeça é uma das características que mais afetam o preditor de viewport~\cite{Qian2016}, porém, de acordo com o estudo de~\cite{Nasrabadi2019}, usuários que movimentam muito em vídeos de uma categoria arbitrária, tendem a se movimentar muito também em todas as outras categorias. Desta forma, podemos supor de forma cuidadosa que o usuário teria um comportamento aproximadamente semelhantes se houvesse pequenas variações de qualidade e assim extrair uma representação aproximada da qualidade objetiva percebida sob as mais diversas restrições de sistema, que vão desde capacidade de processamento a variação da largura de banda disponível. Usando ferramentas de simulação de redes como NS-3, NS-2 ou OpNet ainda será possível modelar toda a arquitetura do sistema de transmissão, desde atrasos de rede controlados a consumo energético sob diferentes infraestruturas de comunicações, como 5G, Wi-Fi, satélite, redes opticas, Ethernet, etc.
+Porém, a partir desta abordagem surgem vários novos desafios. Como os chunks do protocolo DASH possuem duração fixa de vários segundos e o usuário pode mover o viewport para fora do grupo de ladrilhos inicialmente apresentados, é necessário prever o movimento do usuário durante toda a duração do chunk. Uma predição de viewport errada solicitará um conjunto de chunks errados exigindo uma nova requisição dos ladrilhos faltantes, desperdiçando largura de banda e em alguns casos o vídeo poderá travar até que o chunk correto chegue, seja decodificado e desenhado na tela. O algoritmo ABR passa a ter que lidar com os erros de predição de viewport e restrições como por exemplo, não misturar ladrilhos de qualidades diferentes no viewport e a classificação das requisições dos ladrilhos em níveis de prioridade. Além disso, podemos observar que quanto maior a segmentação (e menor os ladrilhos), menos pixels ficarão fora do viewport. Porém, quanto menor o ladrilho, menor o espaço de busca do compensador de movimento dos codificadores, reduzindo a eficiência da compressão e, por fim, aumentando a taxa de bits. Outro problema que surge é que a segmentação da projeção em ladrilhos independentes exigirá que o cliente utilize várias instâncias do decodificador trabalhando em paralelo. Desta forma, quanto maior o ladrilhamento, mais decodificadores serão necessários instanciar e mais tempo de processamento será utilizado. Esta condição se torna crítica em dispositivos móveis que possuem menos poder computacional, onde o uso massivo de processamento poderá drenar a bateria muito rápido além de causar aquecimento.
 
-Até o momento não existe na literatura nenhum banco de dados que apresente os vídeos da forma como propomos, onde a codificação é feita baseada na qualidade e não na taxa de bits usando o codificador HEVC. Se a codificação for feita considerando a taxa de bits poderá haver grande desperdício de largura de banda com ladrilhos que são menos complexos de codificar do que outros. Além disso, caso os ladrilhos possuam grande diferença de qualidade dentro de uma mesma representação, haverá bordas em torno dos ladrilhos, o que degradará a qualidade de experiência.
+Diversas propostas foram feitas afim de lidar com a predição de viewport e a seleção de chunks, porém é muito difícil realizar a comparação do desempenho de cada abordagem devido a natureza interativa da comunicação cliente-servidor. Submeter grupos de degradações a diferentes usuários afim de avaliar a qualidade subjetiva é a abordagem  recomendada pelo ITU-T afim de avaliar a qualidade subjetiva do vídeo esférico~\cite{ITU-ITU-TRecommendationP.9192020}. Porém, é muito difícil controlar o que o usuário verá, pois a cada reprodução do vídeo esférico com ladrilhos, os usuários terão um comportamento completamente diferente. Inclusive, se um vídeo for assistido por um mesmo usuário várias vezes, seu comportamento será diferente a cada reprodução. Cada ladrilho que foi codificado individualmente com a mesma qualidade visual possuirá diferentes taxas de bits dependendo do seu conteúdo e cada usuário solicitará um diferente conjunto de ladrilhos ao servidor dependendo de onde estará olhando e da velocidade de movimento da cabeça, que por sua vez requererá diferentes recursos do computador e terá diferentes qualidades de experiência (do inglês QoE - Quality of Experience).
 
-Os principais objetivos deste trabalho é criar um ambiente padronizado e controlado para a comparação de diferentes algoritmos e sistema de transmissão de vídeos esféricos segmentados em ladrilhos usando protocolos adaptativos como o DASH. Como objetivos específicos, fazemos a caracterização dos ladrilhos usando diferentes padrões de ladrilhamento. Extraímos a taxa de bits e medido o tempo de decodificação para cada chunk e calculamos diversas métricas de qualidade objetivas baseadas no erro quadrático médio afim de estimar as distorções causadas pelas projeções e pelas codificações usando os dois tipos de projeções populares mais populares, a projeção equirretangular e projeção cubemap. Usando o banco de dados de movimento de cabeças disponibilizado no trabalho de Nasrabadi~\cite{Nasrabadi2019}, extraímos o comportamento das requisições dos ladrilhos em um caso ideal que pode se usado como limite inferior do uso de recursos e calculamos a qualidade do vídeo apresentado no viewport em termos do MSE. Aproveitando a taxonomia desenvolvida por Nasrabadi ainda agrupamos os resultados considerando o tipo de movimento da câmera e o numero de objetos em movimento no vídeo.
+Afim de permitir a reprodutibilidade do comportamento do usuário sob diferentes algoritmos ABR e preditores de movimento de cabeça, este trabalho propõe um fluxo de trabalho e construção de um banco de dados com diversas métricas objetivas que poderão ser usadas para emular um sistema de transmissão de vídeo e replicar o comportamento dos usuários. A velocidade angular do movimento de cabeça é uma das características que mais afetam o preditor de viewport~\cite{Qian2016}, porém, de acordo com o estudo de~\cite{Nasrabadi2019}, usuários que movimentam muito em vídeos de uma categoria arbitrária, tendem a se movimentar muito também em todas as outras categorias. Desta forma, podemos supor de forma cuidadosa que o usuário teria um comportamento aproximadamente semelhantes se houvesse pequenas variações de qualidade e assim extrair uma representação aproximada da qualidade objetiva percebida sob as mais diversas restrições de sistema, que vão desde capacidade de processamento a variação da largura de banda disponível. Usando ferramentas de simulação de redes como NS-3, NS-2 ou OpNet ainda será possível modelar toda a arquitetura do sistema de transmissão, desde atrasos de rede controlados a consumo energético sob diferentes infraestruturas de comunicações, como 5G, Wi-Fi, satélite, redes ópticas, Ethernet, etc.
+
+Até o momento não existe na literatura nenhum banco de dados que apresente os dados do streaming de vídeos processados da forma como propomos, onde a codificação é feita baseada na qualidade e não na taxa de bits usando o codificador HEVC. Optamos fazer a compressão usando o parâmetro CRF pois se a codificação for feita considerando a taxa de bits poderá haver grande desperdício de largura de banda com ladrilhos que são poucos complexos de codificar, como por exemplo o chão ou o teto. Além disso, caso os ladrilhos possuam grande diferença de qualidade dentro de uma mesma representação, haverá bordas em torno dos ladrilhos, o que degradará a qualidade de experiência.
+
+O principal objetivo deste trabalho é criar um ambiente padronizado e controlado para a comparação de diferentes sistema de transmissão de vídeos esféricos segmentados em ladrilhos usando protocolos adaptativos como o DASH. No caminho, nossos objetivos específicos são: 
+
+\begin{enumerate}
+	\item Caracterizar os ladrilhos dos vídeos de diferentes categorias, sob diferentes projeções e segmentados em diferentes padrões de ladrilhamento. Extraímos a taxa de bits, medimos o tempo de decodificação para cada chunk e calculamos diversas métricas de qualidade objetivas baseadas no erro quadrático médio tanto das projeções quanto do viewport exbido ao usuário.
+	
+	\item Estimar o limite inferior de recursos necessários para a reprodução dos vídeos esféricos para diferentes usuários. Usando o banco de dados de movimento de cabeças disponibilizado no trabalho de Nasrabadi~\cite{Nasrabadi2019}, extraímos o comportamento das requisições dos ladrilhos em um caso ideal e calculamos a qualidade do vídeo apresentado no viewport em termos do MSE. Aproveitando a taxonomia desenvolvida por Nasrabadi ainda agrupamos os resultados considerando o tipo de movimento da câmera e o numero de objetos em movimento no vídeo.
+	
+	\item Desenvolver um conjunto de ferramentas para manipulação das projeções equirretangular e cubemap, conversões de coordenadas 3D e 2D, extração do viewport, seleção de ladrilhos e cálculo de métricas de qualidade.
+\end{enumerate}
 
 O restante deste estudo está organizado da seguinte forma: No Capítulo 2, é realizada uma revisão do estado da arte para datasets de métricas de vídeo esférico segmentado em ladrilhos, considerando mecanismos de seleção de blocos, previsão de janela de visualização e bancos de dados disponíveis. O capítulo 3 concentra-se na modelagem do Sistema e métricas propostas. O capítulo 4 relata as análises de diferentes cenários e as características específicas deste dataset, por fim, no capítulo 5 são apresentadas as conclusões do trabalho desenvolvido e as propostas de trabalhos futuros para a continuação desta pesquisa.
 
@@ -48,15 +63,105 @@ O restante deste estudo está organizado da seguinte forma: No Capítulo 2, é r
 
 \chapter{Modelagem do sistema de streaming adaptativo de vídeo esférico com ladrilhos}\label{Cap:Problem Design}
 
-No vídeo esférico, diferente do vídeo tradicional que é plano, os quadros do vídeo são projetados no interior de uma esfera 3D, onde o usuário, localizado no centro, possui três graus de liberdade para olhar ao redor movimentando a cabeça. A figura XXXX mostra o diagrama geral do streaming de vídeo esférico com ladrilhos. Primeiramente, para comprimir o vídeo, a esfera é mapeada um plano através de técnicas de projeção cartográficas, como mostra a figura~\ref{fig:streaming---client-side-and-server-side}. Cada etapa deste diagrama será explicado nas seções a seguir.
+No vídeo esférico, diferente do vídeo tradicional que é plano, os quadros do vídeo são projetados no interior de uma esfera 3D, onde o usuário, localizado no centro, possui três graus de liberdade para olhar ao redor movimentando a cabeça. A figura~\ref{fig:streaming_client_server} mostra o diagrama geral do streaming de vídeo esférico com ladrilhos. Cada etapa deste diagrama será explicado nas seções a seguir. 
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\linewidth]{"fig/Streaming - client-side and server-side.pdf"}
 	\caption{Sistema de streaming de vídeo esférico.}
-	\label{fig:streaming---client-side-and-server-side}
+	\label{fig:streaming_client_server}
 \end{figure}
 
+
+\subsection{Os sistemas de coordenadas}
+
+Antes de descrever as projeções, o processo de extração do viewport, a seleção dos ladrilhos e as métricas de qualidade é necessário descrever os diversos sistemas de coordenadas utilizados e suas relações. Na literatura, várias transformações utilizam de diferentes sistemas de coordenadas, de acordo com a estrutura que estamos processando.
+
+\subsubsection{Sistema de Coordenadas Cartesiano}
+
+O sistema de coordenadas cartesiano, dextrogiro, representado na figura~\ref{fig:coordenadas}{(a) é usado para descrever e operar a esfera no espaço de 3 dimensões através de operações de álgebra linear. O vídeo esférico é representado com o usuário no centro de uma esfera de raio 1. Na posição inicial, o eixo Z aponta para a frente, o eixo X aponta para a direita e o eixo Y aponta para baixo.
+	
+	\begin{figure}[htbp]
+		\centering
+		
+		\subfigure[Sistema de coordenadas de referência em um espaço cartesiano. \label{fig:coordenadas}]
+		{\includegraphics[width=0.30\linewidth]{fig/coordenadas.png}} \quad
+		\subfigure[Sistema de coordenadas horizontal em um espaço cartesiano. \label{fig:hcs}]
+		{\includegraphics[width=0.30\linewidth]{fig/hcs.png}} \quad
+		\subfigure[Sistema de coordenadas de corpo em um espaço cartesiano. \label{fig:bcs}]
+		{\includegraphics[width=0.30\linewidth]{fig/bcs.png}} \quad
+		
+		\caption{Os Sistemas de Coordenadas utilizados}
+		\label{fig:coord_sis}
+	\end{figure}
+	
+	
+	\subsubsection{Sistema Horizontal}
+	
+	Para representar um ponto sobre a casca da esfera do vídeo, uma variação do sistema de coordenadas esféricas, chamado de sistema de coordenadas horizontal é usado como intermediário para operações entre projeções. O sistema de coordenadas horizontal, muito usado na astronomia para observação de corpos celestes, utiliza ângulos para representar a posição de ponto na esfera. Considerando o plano ZX como sendo o horizonte e o eixo Z como sendo a direção de referência, 
+	
+	Como mostra a figura~\ref{fig:hcs}, neste sistema, o azimute é o angulo no plano ZX (horizonte) que o ponto projeta em relação ao eixo Z e a altitude é a inclinação vertical do ponto em relação ao plano do horizonte. Por convenção, a elevação varia de -90° a 90°, sendo que o sinal positivo aponta para acima do horizonte, enquanto que o azimute varia de -180° a 180°, sendo que o sinal positivo está à direita do eixo Z. Desta forma, o pixel na posição (elevação, azimute) igual a (0,0) encontra-se no ponto (x=0, y=0, z=1). As equações para conversão das coordenadas cartesianas em coordenadas horizontais não dependem da projeção e podem ser descritas pelo conjunto de equações~\ref{eq:cart2hcs}.
+	
+	\begin{equation}
+	\label{eq:cart2hcs}
+	\begin{split}
+		r &= \sqrt{x^2+y^2+z^2} \\
+		\text{Azimute} &=\sin^{-1}\left(\frac{-y}{r}\right) \\
+		\text{Elevação} &=\tan^{-1}\left(\frac{x}{z}\right)
+	\end{split}		
+	\end{equation}
+	
+	
+	\subsubsection{Coordenadas de Corpo}
+	
+	O sistema de coordenadas de corpo, também usado para modelagem de aeronaves é usado para modelar o movimento da cabeça do usuário e sua orientação coincide com o sistema de coordenadas horizontal. Este sistema consiste de ângulos relativos à posição inicial (elevação=0 e azimute=0 no sistema horizontal, ou o vetor (0, 0, 1) no sistema cartesiano) e é usado para representar o movimento da cabeça do usuário usando ângulos de Euler, como mostra a figura~\ref{fig:bcs}. por se tratar de rotação, os valores dos ângulos podem assumir qualquer valor (em radianos).
+	
+	Assim, rodar o usuário em uma direção é equivalente a rodar a esfera na direção oposta. O movimento de \textit{pitch} é realizado olhando em direção ao eixo X e rodando a esfera. O movimento de \textit{yaw} é realizado rodando a esfera em relação ao eixo Y e o \textit{roll} é realizado rodando a esfera em relação ao eixo Z. É convencionado que todas as rotações em sentido horário são positivas e em sentido anti-horário são negativas. Assim, olhar para cima possui um \textit{pitch} positivo, olhar para a direita possui um yaw positivo e rodar a cabeça em sentido horário possui um ângulo \textit{roll} positivo.
+	
+	A nova posição dos pixels na posição (x’, y’, z’) da esfera é dada pelo produto matricial da posição dos pixels por uma matriz de rotação R, conforme equação abaixo.
+	
+	\begin{align*}
+		\begin{bmatrix}
+			X\\
+			Y\\
+			Z
+		\end{bmatrix}
+		=
+		R \times
+		\begin{bmatrix}
+			X'\\
+			Y'\\
+			Z'
+		\end{bmatrix}
+	\end{align*}
+	
+	A matriz de rotação para os ângulos (yaw, pitch, roll) é dada pelo produto matricial das matrizes de rotação do eixo X, Y e Z na seguinte ordem:
+	
+	\begin{align*}
+		R=Y\times X\times Z
+	\end{align*}
+	
+	As matrizes individuais são:
+	
+	\begin{align*}
+		R_X &=\begin{bmatrix}
+			1 & 0 & s0\\
+			0 & cos(pitch) & -sin(pitch)\\
+			0 & sin(pitch) & cos(pitch)
+		\end{bmatrix}
+		\\
+		R_Y &=\begin{bmatrix}
+			cos(yaw) & 0 & sin(yaw)\\
+			0 & 1 & 0\\
+			-sin(yaw) & 0 & cos(yaw)
+		\end{bmatrix}
+		\\
+		R_Z &=\begin{bmatrix}
+			cos(roll) & -sin(roll) & 0\\
+			sin(roll) & cos(roll) & 0\\
+			0 & 0 & 1
+		\end{bmatrix}
+	\end{align*}
 
 \section{Projeção}
 
@@ -159,90 +264,6 @@ Como forma de representação auxiliar, cada face é mapeada em um plano $uv$ co
 	\end{tabular}
 \end{table}
 
-
-\subsection{video360tools}
-
-O sistema de coordenadas cartesiano, dextrogiro, representado na figura~\ref{fig:coordenadas} é usado para descrever e operar a esfera no espaço de 3 dimensões através de operações de álgebra linear. O vídeo esférico é representado com o usuário no centro de uma esfera de raio 1. Na posição inicial, o eixo Z aponta para a frente, o eixo X aponta para a direita e o eixo Y aponta para baixo. Como o campo de visão do usuário é limitado pelo sistema visual humano, ele visualiza apenas uma parte da esfera, chamada de Viewport.
-
-\begin{figure}[htbp]
-        \centering
-        
-        \subfigure[Sistema de coordenadas de referência em um espaço cartesiano. \label{fig:coordenadas}]
-        {\includegraphics[width=0.25\linewidth]{fig/coordenadas.png}} \quad
-        \subfigure[Sistema de coordenadas horizontal em um espaço cartesiano. \label{fig:hcs}]
-        {\includegraphics[width=0.25\linewidth]{fig/hcs.png}} \quad
-        \subfigure[Sistema de coordenadas de corpo em um espaço cartesiano. \label{fig:bcs}]
-        {\includegraphics[width=0.25\linewidth]{fig/bcs.png}} \quad
-        
-        \caption{Os Sistemas de Coordenadas}
-        \label{fig:coord_sis}
-\end{figure}
-
-% \subsubsection{Sistema Horizontal}
-Para representar um ponto na esfera do vídeo, uma variação do sistema de coordenadas esféricas, chamado de sistema de coordenadas horizontal é usado como intermediário para operações entre projeções. O sistema de coordenadas horizontal, muito usado na astronomia para observação de corpos celestes, utiliza ângulos para representar a posição dos pixels na esfera do vídeo. Como mostra a figura~\ref{fig:hcs}, neste sistema, as coordenadas são relativas ao horizonte (plano ZX) e a posição inicial, isto é, o eixo Z positivo. 
-
-A elevação varia de -90° a 90°, sendo que o sinal positivo aponta para acima do horizonte, enquanto que o azimute varia de -180° a 180°, sendo que o sinal positivo está à direita do eixo Z. Desta forma, o pixel na posição (elevação, azimute) igual a (0,0) encontra-se no ponto (x=0, y=0, z=1). As equações para conversão das coordenadas cartesianas em coordenadas horizontais são:
-
-\begin{align}
-        r &= \sqrt{x^2+y^2+z^2} \\
-        \text{Azimute} &=\sin^{-1}\left(\frac{-y}{r}\right) \\
-        \text{Elevação} &=\tan^{-1}\left(\frac{x}{z}\right)\\
-        \label{eq:cart2hcs}
-\end{align}
-
-% \subsubsection{Coordenadas de Corpo}
-
-O sistema de coordenadas de corpo, também usado para modelagem de aeronaves é usado para modelar o movimento da cabeça do usuário e sua orientação coincide com o sistema de coordenadas horizontal. Este sistema consiste de ângulos relativos à posição inicial (elevação=0 e azimute=0 no sistema horizontal, ou o vetor (0, 0, 1) no sistema cartesiano) e é usado para representar o movimento da cabeça do usuário usando ângulos de Euler, como mostra a figura~\ref{fig:bcs}. por se tratar de rotação, os valores dos ângulos podem assumir qualquer valor (em radianos).
-
-Assim, rodar o usuário em uma direção é equivalente a rodar a esfera na direção oposta. O movimento de \textit{pitch} é realizado olhando em direção ao eixo X e rodando a esfera. O movimento de \textit{yaw} é realizado rodando a esfera em relação ao eixo Y e o \textit{roll} é realizado rodando a esfera em relação ao eixo Z. É convencionado que todas as rotações em sentido horário são positivas e em sentido anti-horário são negativas. Assim, olhar para cima possui um \textit{pitch} positivo, olhar para a direita possui um yaw positivo e rodar a cabeça em sentido horário possui um ângulo \textit{roll} positivo.
-
-A nova posição dos pixels na posição (x’, y’, z’) da esfera é dada pelo produto matricial da posição dos pixels por uma matriz de rotação R, conforme equação abaixo.
-
-\begin{align*}
-        \begin{bmatrix}
-                X\\
-                Y\\
-                Z
-        \end{bmatrix}
-        =
-        R \times
-        \begin{bmatrix}
-                X'\\
-                Y'\\
-                Z'
-        \end{bmatrix}
-\end{align*}
-
-A matriz de rotação para os ângulos (yaw, pitch, roll) é dada pelo produto matricial das matrizes de rotação do eixo X, Y e Z na seguinte ordem:
-
-\begin{align*}
-        R=Y\times X\times Z
-\end{align*}
-
-As matrizes individuais são:
-
-\begin{align*}
-        R_X &=\begin{bmatrix}
-                1 & 0 & s0\\
-                0 & cos(pitch) & -sin(pitch)\\
-                0 & sin(pitch) & cos(pitch)
-        \end{bmatrix}
-        \\
-        R_Y &=\begin{bmatrix}
-                cos(yaw) & 0 & sin(yaw)\\
-                0 & 1 & 0\\
-                -sin(yaw) & 0 & cos(yaw)
-        \end{bmatrix}
-        \\
-        R_Z &=\begin{bmatrix}
-                cos(roll) & -sin(roll) & 0\\
-                sin(roll) & cos(roll) & 0\\
-                0 & 0 & 1
-        \end{bmatrix}
-\end{align*}
-
-
-\subsection{Projeções}
 
 
 \subsection{O Viewport}
