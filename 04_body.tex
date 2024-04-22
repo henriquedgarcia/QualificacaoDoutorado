@@ -215,6 +215,7 @@ codificadores como H.265 ou AV1 transformam esta projeção em um fluxo de bits 
 As projeções mais comuns são a projeção equirretangular (ERP) e projeção cubemap (CMP)., encapsulados em arquivos MP4, por exemplo e armazenados ou transmitidos pela rede. Desta forma, para poder manipular os pixels no domínio da projeção e da esfera, extrair o viewport e calcular a qualidade do vídeo, foi necessário desenvolver uma nova biblioteca chamada video360tools\footnote{https://github.com/henriquedgarcia/video360utils} que realiza o mapeamento ente diferentes sistemas coordenadas para as projeções equirretangular e cubemap. Para isto foi definido a relação entre os sistemas de coordenadas cartesiano, horizontal e sistema de coordenadas de corpo conforme descrito a seguir.
 
 
+
 \subsubsection{Projeção Cubemap}
 
 A projeção cubemap é outra técnica comumente usada em vídeos 360° para mapear um ambiente tridimensional em uma representação bidimensional, atualmente adotado pelo Youtube e pelo Facebook. Ao contrário da projeção equirretangular, que mapeia a esfera em um plano retangular, a projeção cubemap mapeia a esfera em seis faces quadradas de um cubo de lado igual a 2. As seis faces correspondem a visão ao redor do ponto de captura. As faces geralmente são organizadas em uma grade de 3x2 formando um único arquivo de imagem. As três imagens superiores são as faces da esquerda, frente e direita, Enquanto as faces de baixo são rotacionadas 90° em sentido horário e correspondem as faces de cima, de trás e de baixo. A figura~\ref{fig:cmp} mostra um exemplo de mapeamento para projeção Cubemap (CMP).
@@ -263,7 +264,6 @@ Como forma de representação auxiliar, cada face é mapeada em um plano $uv$ co
 		\hline
 	\end{tabular}
 \end{table}
-
 
 
 \subsection{O Viewport}
