@@ -75,7 +75,7 @@ No vídeo esférico, diferente do vídeo tradicional que é plano, os quadros do
 
 \subsection{Os sistemas de coordenadas}
 
-Antes de descrever as projeções, o processo de extração do viewport, a seleção dos ladrilhos e as métricas de qualidade é necessário descrever os diversos sistemas de coordenadas utilizados e suas relações. Na literatura, várias transformações utilizam de diferentes sistemas de coordenadas, de acordo com a estrutura que estamos processando.
+Antes de descrever as projeções, o processo de extração do viewport, a seleção dos ladrilhos e as métricas de qualidade é necessário descrever a convenção dos diversos sistemas de coordenadas utilizados. Baseado na biblioteca 360lib da MPEG, utilizamos dois sistemas de coordenadas e deduzimos suas relações para realizar a caracterização proposta. Usamos vetores no espaço cartesiano de três dimensões como referencial inercial que contém a esfera do vídeo. Assim, o movimento de cabeça do usuário pode ser descrito utilizando angulos de euler afim de rotacionar o espaço cartesiano e extrair o viewport.  Além disto, como sistema de coordenadas auxiliar, usamos uma variação do sistema de coordenadas esférico chamado de sistema de coordenadas horizontal afim de identificar os pixels na esfera sem nos preocuparmos com o comprimento dos vetores. A seguir descrevemos mais detalhadamente cada sistema. 
 
 \subsubsection{Sistema de Coordenadas Cartesiano}
 
