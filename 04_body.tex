@@ -79,89 +79,68 @@ Antes de descrever as projeções, o processo de extração do viewport, a sele�
 
 \subsubsection{Sistema de Coordenadas Cartesiano}
 
-O sistema de coordenadas cartesiano, dextrogiro, representado na figura~\ref{fig:coordenadas}{(a) é usado para descrever e operar a esfera no espaço de 3 dimensões através de operações de álgebra linear. O vídeo esférico é representado com o usuário no centro de uma esfera de raio 1. Na posição inicial, o eixo Z aponta para a frente, o eixo X aponta para a direita e o eixo Y aponta para baixo.
+O sistema de coordenadas cartesiano, dextrogiro, representado na figura~\ref{fig:coordenadas}{(a) é usado para descrever e operar a esfera no espaço de 3 dimensões através de operações de álgebra linear. O vídeo esférico é representado com o usuário no centro de uma esfera de raio 1. Na posição inicial, o eixo Z aponta para a frente, o eixo X aponta para a direita e o eixo Y aponta para baixo. O arco azul representa o FOV do usuário. Assim, qualquer ponto na esfera pode ser representado por um vetor $ \overrightarrow{v} = (x,y,z) $.
+
+\begin{figure}[h]
+	\centering
 	
-	\begin{figure}[htbp]
-		\centering
-		
-		\subfigure[Sistema de coordenadas de referência em um espaço cartesiano. \label{fig:coordenadas}]
-		{\includegraphics[width=0.30\linewidth]{fig/coordenadas.png}} \quad
-		\subfigure[Sistema de coordenadas horizontal em um espaço cartesiano. \label{fig:hcs}]
-		{\includegraphics[width=0.30\linewidth]{fig/hcs.png}} \quad
-		\subfigure[Sistema de coordenadas de corpo em um espaço cartesiano. \label{fig:bcs}]
-		{\includegraphics[width=0.30\linewidth]{fig/bcs.png}} \quad
-		
-		\caption{Os Sistemas de Coordenadas utilizados}
-		\label{fig:coord_sis}
-	\end{figure}
+	\subfigure[Sistema de coordenadas de referência. \label{fig:coordenadas}]
+	{\includegraphics[width=0.30\linewidth]{fig/coordenadas.png}} \quad
 	
+	\subfigure[ângulos de Euler e sua representação do movimento de cabeça. \label{fig:bcs}]
+	{\includegraphics[width=0.30\linewidth]{fig/bcs.png}} \quad
 	
-	\subsubsection{Sistema Horizontal}
+	\caption{Os Sistemas de Coordenadas em um espaço cartesiano}
+	\label{fig:coord_sis}
+\end{figure}
+
+Para descrever a direção da cabeça do usuário, consideramos que rodar a cabeça em uma direção é equivalente a rodar a esfera na direção oposta. Para isso, usamos um conjunto de ângulos de Euler (yaw, pitch e roll) para realizar a rotação da esfera usando a sequencia y-x-z. O yaw indica a rotação do eixo y, o pitch a rotação do eixo X e o Roll a rotação do eixo Z. Tal convenção também conhecida como angulos de Tait–Bryan é muito usado em aplicações aeroespaciais. Estes ângulos coincide com os angulos do sistema de coordenadas horizontal facilitando a identificação do centro do viewport. Sua valores são relativos à posição inicial (elevação=0 e azimute=0 no sistema horizontal, ou o vetor (0, 0, 1) no sistema cartesiano), como mostra a figura~\ref{fig:bcs}. Por se tratar de rotação, os valores dos ângulos podem assumir qualquer valor valor real (em radianos).
+É convencionado que todas as rotações em sentido horário são positivas e em sentido anti-horário são negativas. Assim, olhar para cima possui um \textit{pitch} positivo, olhar para a direita possui um \textit{yaw} positivo e rodar a cabeça em sentido horário possui um \textit{roll} positivo.
+
+A rotação de um ponto no sistema de referência (fixo) com os ângulos de Euler pode ser representada por uma equação na forma matricial $\overrightarrow{V}^T = \overrightarrow{R} \times \overrightarrow{v}^T $, onde $\overrightarrow{V}^T = (x',y',z')$ é a nova posição, $\overrightarrow{V}^T = (x,y,z)$ é o vetor no sistema de referência e $\overrightarrow{R}$ é a matriz de rotação dada pela equação~\ref{eq:matrotation}.
+
+\begin{equation}
+	R=\begin{bmatrix}
+		cos(yaw) & 0 & sin(yaw)\\
+		0 & 1 & 0\\
+		-sin(yaw) & 0 & cos(yaw)
+	\end{bmatrix}
+	\begin{bmatrix}
+		1 & 0 & s0\\
+		0 & cos(pitch) & -sin(pitch)\\
+		0 & sin(pitch) & cos(pitch)
+	\end{bmatrix}
+	\begin{bmatrix}
+		cos(roll) & -sin(roll) & 0\\
+		sin(roll) & cos(roll) & 0\\
+		0 & 0 & 1
+	\end{bmatrix}
+	\label{eq:matrotation}
+\end{equation}	
 	
-	Para representar um ponto sobre a casca da esfera do vídeo, uma variação do sistema de coordenadas esféricas, chamado de sistema de coordenadas horizontal é usado como intermediário para operações entre projeções. O sistema de coordenadas horizontal, muito usado na astronomia para observação de corpos celestes, utiliza ângulos para representar a posição de ponto na esfera. Considerando o plano ZX como sendo o horizonte e o eixo Z como sendo a direção de referência, 
-	
-	Como mostra a figura~\ref{fig:hcs}, neste sistema, o azimute é o angulo no plano ZX (horizonte) que o ponto projeta em relação ao eixo Z e a altitude é a inclinação vertical do ponto em relação ao plano do horizonte. Por convenção, a elevação varia de -90° a 90°, sendo que o sinal positivo aponta para acima do horizonte, enquanto que o azimute varia de -180° a 180°, sendo que o sinal positivo está à direita do eixo Z. Desta forma, o pixel na posição (elevação, azimute) igual a (0,0) encontra-se no ponto (x=0, y=0, z=1). As equações para conversão das coordenadas cartesianas em coordenadas horizontais não dependem da projeção e podem ser descritas pelo conjunto de equações~\ref{eq:cart2hcs}.
-	
-	\begin{equation}
-	\label{eq:cart2hcs}
-	\begin{split}
-		r &= \sqrt{x^2+y^2+z^2} \\
-		\text{Azimute} &=\sin^{-1}\left(\frac{-y}{r}\right) \\
-		\text{Elevação} &=\tan^{-1}\left(\frac{x}{z}\right)
-	\end{split}		
-	\end{equation}
-	
-	
-	\subsubsection{Coordenadas de Corpo}
-	
-	O sistema de coordenadas de corpo, também usado para modelagem de aeronaves é usado para modelar o movimento da cabeça do usuário e sua orientação coincide com o sistema de coordenadas horizontal. Este sistema consiste de ângulos relativos à posição inicial (elevação=0 e azimute=0 no sistema horizontal, ou o vetor (0, 0, 1) no sistema cartesiano) e é usado para representar o movimento da cabeça do usuário usando ângulos de Euler, como mostra a figura~\ref{fig:bcs}. por se tratar de rotação, os valores dos ângulos podem assumir qualquer valor (em radianos).
-	
-	Assim, rodar o usuário em uma direção é equivalente a rodar a esfera na direção oposta. O movimento de \textit{pitch} é realizado olhando em direção ao eixo X e rodando a esfera. O movimento de \textit{yaw} é realizado rodando a esfera em relação ao eixo Y e o \textit{roll} é realizado rodando a esfera em relação ao eixo Z. É convencionado que todas as rotações em sentido horário são positivas e em sentido anti-horário são negativas. Assim, olhar para cima possui um \textit{pitch} positivo, olhar para a direita possui um yaw positivo e rodar a cabeça em sentido horário possui um ângulo \textit{roll} positivo.
-	
-	A nova posição dos pixels na posição (x’, y’, z’) da esfera é dada pelo produto matricial da posição dos pixels por uma matriz de rotação R, conforme equação abaixo.
-	
-	\begin{align*}
-		\begin{bmatrix}
-			X\\
-			Y\\
-			Z
-		\end{bmatrix}
-		=
-		R \times
-		\begin{bmatrix}
-			X'\\
-			Y'\\
-			Z'
-		\end{bmatrix}
-	\end{align*}
-	
-	A matriz de rotação para os ângulos (yaw, pitch, roll) é dada pelo produto matricial das matrizes de rotação do eixo X, Y e Z na seguinte ordem:
-	
-	\begin{align*}
-		R=Y\times X\times Z
-	\end{align*}
-	
-	As matrizes individuais são:
-	
-	\begin{align*}
-		R_X &=\begin{bmatrix}
-			1 & 0 & s0\\
-			0 & cos(pitch) & -sin(pitch)\\
-			0 & sin(pitch) & cos(pitch)
-		\end{bmatrix}
-		\\
-		R_Y &=\begin{bmatrix}
-			cos(yaw) & 0 & sin(yaw)\\
-			0 & 1 & 0\\
-			-sin(yaw) & 0 & cos(yaw)
-		\end{bmatrix}
-		\\
-		R_Z &=\begin{bmatrix}
-			cos(roll) & -sin(roll) & 0\\
-			sin(roll) & cos(roll) & 0\\
-			0 & 0 & 1
-		\end{bmatrix}
-	\end{align*}
+\subsubsection{Sistema Horizontal}
+
+Para representar um ponto sobre a casca da esfera do vídeo, uma variação do sistema de coordenadas esféricas, chamado de sistema de coordenadas horizontal é usado como intermediário para operações entre projeções. O sistema de coordenadas horizontal, muito usado na astronomia para observação de corpos celestes, utiliza ângulos de azimute e de altitude para representar a posição de ponto na esfera em relação a um ponto de referência.
+
+Como mostra a figura~\ref{fig:hcs}, neste sistema, o azimute é o angulo da projeção do vetor $ \overrightarrow{v}$ no plano ZX (horizonte) em relação ao eixo Z e a altitude é a elevação vertical do vetor em relação ao plano do horizonte. Por convenção, a elevação varia de -90° a 90°, sendo que o sinal positivo aponta para acima do horizonte, enquanto que o azimute varia de -180° a 180°, sendo que o sinal positivo está à direita do eixo Z. Desta forma, o pixel na posição (elevação, azimute) igual a (0,0) encontra-se no ponto (x=0, y=0, z=1). 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.30\linewidth]{fig/hcs.png}
+	\caption{O Sistema de Coordenadas Horizontal}
+	\label{fig:hcs}	 
+\end{figure}
+
+As equações para conversão das coordenadas cartesianas em coordenadas horizontais não dependem da projeção e podem ser descritas pelo conjunto de equações~\ref{eq:cart2hcs}.
+
+\begin{equation}
+\label{eq:cart2hcs}
+\begin{split}
+	\text{Azimute} &=\sin^{-1}\left(\frac{-y}{\sqrt{x^2+y^2+z^2}}\right) \\
+	\text{Elevação} &=\tan^{-1}\left(\frac{x}{z}\right)
+\end{split}		
+\end{equation}	
+
 
 \section{Projeção}
 
