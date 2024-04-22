@@ -4,7 +4,7 @@
 
 Streaming de vídeo esféricos, ou vídeos 360°, é uma relativamente nova aplicação multimídia para realiadade virtual (do inglês VR - Virtual Reality) que chamou muita atenção nos últimos anos com a população dos óculos de realidade virtual, também conhecidos como visor de cabeça (do inglês HMD - Head Mounted Display) e o lançamento do Metaverso pela Meta. Como apresentado na figura~\ref{fig:video360}, os vídeos esféricos (ou vídeo 360°) são projetados e reproduzidos na casca interna de uma esfera e o usuário é posto no centro. Usando informações dos sensores de movimento do HMD, o usuário tem liberdade para olhar ao redor movendo a cabeça em três graus de liberdade enquanto o HMD exibe o vídeo em uma janela de visualização chamada viewport. Além dos HMD os vídeos esféricos também podem ser reproduzidos em dispositivos celulares, aplicativos desktop e navegadores web através do movimento do mouse. Esta facilidade permite que praticamente qualquer dispositivo reproduza os vídeos esféricos facilitando seu acesso.
 
-\begin{figure}[htb]
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\columnwidth]{fig/viewport.pdf}
 	\caption{Em um vídeo esférico uma projeção é usada como textura de uma esfera 3D com o usuário no centro que poderá mover a cabeça e olhar ao redor usando seu HMD.}
@@ -15,7 +15,7 @@ De todas as aplicações para VR, o streaming de vídeo esférico é o que possu
 
 No entanto, ao contrário dos vídeos 2D, um usuário deve visualizar apenas uma fração de todo o vídeo esférico devido à limitação do campo de visão humano (FOV). Conforme mostrado na Figura~\ref{fig:viewport1}(a), a região do vídeo que é exibido no HMD é chamada viewport e todos os pixels fora desta região não serão visualizados pelo usuário. Dependendo do fabricante do HMD o FOV pode variar, mas geralmente possui $\times90^{\circ}$ de abertura vertical e de $120^{\circ}$ a $90^{\circ}$ de abertura horizontal, o que corresponde a aproximadamente 16\% da esfera~\cite{Afzal2017}. Por isso, para garantir boa qualidade exibida no HMD, a projeção deve ser codificada em alta resolução, resultando em arquivos muito grande e necessitando de tanta largura de banda quanto for a qualidade da codificação. 
 
-\begin{figure}[htb]
+\begin{figure}[h]
         \centering
         \includegraphics[width=0.80\columnwidth]{fig/viewport1.pdf}
         \caption{Viewport em um streaming com ladrilhos: desperdício ao requisitar pixels não vistos (em vermelho).}
@@ -26,7 +26,7 @@ Desta forma, transmitir toda a projeção pode desperdiçar diversos recursos do
 
 Afim de economizar recursos, vários trabalhos~\cite{Alface2012, Zare2016, Qian2018, Liu2017, Graf2017, Xiao2018, Nasrabadi2019} sugerem uma abordagem baseada na segmentação espacial da projeção em vídeos independentes chamados ladrilhos, de modo que o cliente possa solicitar somente os ladrilhos em uma região de interesse (do inglês ROI - Region Of Interest) que serão vistos pelo usuário nos próximos segundos. A figura~\ref{fig:viewport2} apresenta esta abordagem utilizando um padrão de ladrilhamento $4 \times 4$. A ROI será todos os pixels cobertos pelos ladrilhos que tocam o viewport. Desta forma, somente os ladrilhos tocados pelo viewport poderão ser requisitados com maior qualidade, enquanto os ladrilhos não vistos serão transmitidos em baixa qualidade ou mesmo não serão transmitidos. 
 
-\begin{figure}[htb]
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.80\columnwidth]{fig/viewport2.pdf}
 	\caption{Um vídeo ladrilhado no formato $6 \times 4$ com região de interesse em verde. Apenas essa região é necessária para o viewport do usuário.}
@@ -65,7 +65,7 @@ O restante deste estudo está organizado da seguinte forma: No Capítulo 2, é r
 
 No vídeo esférico, diferente do vídeo tradicional que é plano, os quadros do vídeo são projetados no interior de uma esfera 3D, onde o usuário, localizado no centro, possui três graus de liberdade para olhar ao redor movimentando a cabeça. A figura~\ref{fig:streaming_client_server} mostra o diagrama geral do streaming de vídeo esférico com ladrilhos. Cada etapa deste diagrama será explicado nas seções a seguir. 
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.9\linewidth]{"fig/Streaming - client-side and server-side.pdf"}
 	\caption{Sistema de streaming de vídeo esférico.}
