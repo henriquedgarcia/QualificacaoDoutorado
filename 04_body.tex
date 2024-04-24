@@ -145,28 +145,28 @@ As equações para conversão das coordenadas cartesianas em coordenadas horizon
 
 Projeções são um tipo de mapeamento entre dois espaços vetoriais. No caso, a esfera, descrita no plano cartesiano de três dimensões é mapeada em um plano bidimencional representado pela imagem. Estas técnicas são muito conhecidas no ambiente de desenvolvimento de modelagem objetos 3D em aplicações como Blender, Unreal e Unity para armazenamento de texturas em arquivos de imagem tradicionais. Ao desenhar o objeto 3D na tela, o motor gráfico busca os pixels correspondentes na imagem.
 
-\subsubsection{Projeção Equirretangular}
+
+\subsection{Projeção Equirretangular}
 
 A projeção equirretangular é uma técnica de mapeamento cartográfico de uma esfera para um plano retangular, preservando a proporção dos pixels, mas distorcendo a imagem. Isto é, quando mais próximo dos polos, os pixels diminuem a altura enquanto aumentam sua largura. Isto produz fortes deformações na região próxima aos polos, mas como os usuários tendem a manter o olhar a altura do horizonte, a maior parte do conteúdo do vídeo é facilmente visualizado. A figura~\ref{fig:erp} apresenta como é feita a projeção.
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth]{fig/erp.png}
+	\includegraphics[width=0.8\textwidth]{fig/projecao_erp.pdf}
 	\caption{Projeção Equirretangular mapeada no plano da imagem.}
 	\label{fig:erp}
 \end{figure}
 
-No mapeamento de um vídeo 360° usando a projeção equirretangular, a esfera do vídeo é desdobrada em um plano 2D retangular, onde cada ponto na esfera é mapeado para um pixel correspondente na imagem retangular. Primeiro, a posição do pixel na esfera em coordenadas cartesianas é convertido para o sistema de coordenadas horizontal usando as equações~\ref{eq:cart2hcs}. Em seguida, as coordenadas são normalizadas em um plano uv onde u e v variam de 0 a 1, o eixo u aponta para a direita e o eixo v aponta para baixo usando as equações~\ref{eq:hcs2erp}. Por fim as coordenadas $(m, n)$ na imagem são dadas multiplicando $u$ e $v$ pela largura ($W$) e altura ($H$) da  imagem, respectivamente. O truncamento é realizado afim de se aplicar a interpolação por vizinho mais próximo.
+No mapeamento de um vídeo 360° usando a projeção equirretangular, a esfera do vídeo é desdobrada em um plano 2D retangular, onde cada ponto na esfera é mapeado para um pixel correspondente na imagem retangular. Primeiro, a posição do pixel na esfera em coordenadas cartesianas é convertido para o sistema de coordenadas horizontal usando as equações~\ref{eq:cart2hcs}. Em seguida, as coordenadas são normalizadas em um plano levogiro uv onde u e v variam de 0 a 1. Neste sistema o eixo u aponta para a direita e o eixo v aponta para baixo e sua relação com sistema cartesiano é representado pelas equações~\ref{eq:hcs2erp}. Por fim as coordenadas na imagem  $(m, n)$ são dadas multiplicando $u$ e $v$ pela largura ($W$) e altura ($H$) da  imagem, respectivamente. Como dificilmente um ponto no espaço coincide com o centro do pixel, podemos aplicar alguma técnica de interpolação como interpolação linear ou interpolação por vizinho mais próximo.
 
-\begin{align}
-	u &= \dfrac{\text{Azimute}}{2\pi} + 0.5 \\
-	v &= \dfrac{-\text{Elevação}}{\pi} + 0.5 \\
+\begin{equation}
 	\label{eq:hcs2erp}
-\end{align}
+	\begin{split}
+    u &= \dfrac{\text{Azimute}}{2\pi} + 0.5 \\
+    v &= \dfrac{-\text{Elevação}}{\pi} + 0.5 \\
+	\end{split}
+\end{equation}
 
-
-Em seguida, a projeção é segmentada espacialmente em vídeos independentes de tamanhos iguais.
-codificadores como H.265 ou AV1 transformam esta projeção em um fluxo de bits que são armazenados em arquivos contêineres como MP4. Estes arquivos podem ser armazenados ou transmitidos
 
 
 \begin{table}[h]
