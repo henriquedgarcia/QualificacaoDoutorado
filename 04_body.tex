@@ -224,6 +224,33 @@ O processo de arranjar as faces do cubo em uma única imagem é chamada de empac
 	\label{fig:projecao_cmp_packing}
 \end{figure}
 
+\subsection{O Viewport (projeção gnomônica)}
+
+A extração do viewport é feita através da projeção Gnomônica, também conhecida como projeção retilinear. Conforme descrito na Figura~\ref{fig:projecao_viewport}, nesta projeção os pontos da esfera são projetados a partir do centro da esfera a um plano tangente a esfera\footnote{https://www.wolframalpha.com/input?i=rectilinear+projection}. Como o viewport é definido como a porção da esfera que é visível pelo usuário e a visão humano é limitada ao campo de visão (do inglês FOV - \textit{ Field of View}), os HMD limitam a projeção a um FOV de aproximadamente $110^\circ\times 90^\circ$. Assim, o plano será tangente a esfera exatamente no centro do FOV e se moverá junto com a cabeça do usuário.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1.0\linewidth]{fig/projecao_viewport.png}
+	\caption{Extração do viewport usando projeção retilinear ou gnomônica.}
+	\label{fig:projecao_viewport}
+\end{figure}
+
+Primeiramente, Uma matriz para a projeção do viewport é pre alocada de acordo com a resolução que será exibida para o usuário. Em vez do valor do pixel, cada célula da matriz é preenchida com a posição do pixel na esfera usando coordenadas horizontais, com os intervalos de $-fov_X$ a $+fov_X$ na horizontal e e de $-fov_Y$ a $+fov_y$ na vertical. Em seguida, cada coordenada é convertida para o sistema cartesiano usando as equações~\ref{eq:cart2hcs}. Finalmente as coordenadas cartesianas são convertidas para o domínio da projeção, seja equirretangular ou cubemap. Obviamente os pontos não serão os mesmos, então é usado algum método de interpolação, com interpolação por vizinho mais próximo ou interpolação linear para se obter o valor que será mapeado naquela célula.
+
+Por outro lado, para verificar quais ladrilhos pertencem ao viewport, é preciso verificar se um pixel da projeção está dentro do viewport. Isto pode ser feito analiticamente se considerarmos que o viewport compreende o espaço interno da intersecção de quatro planos que passam pelo centro da esfera e possuem inclinações relativas ao FOV. Por exemplo, se o centro do FOV do usuário está na posição (yaw=0, pitch=0, roll=0), um FOV de $ 120^\circ\times 90^\circ $ será limitado a 60° à direita e -60° à esquerda do eixo Z e 45° acima e -45° abaixo do eixo Z. Estes planos definem os limites superiores, inferiores, esquerdo e direito do viewport. Estas normais devem apontar para o lado de fora do viewport, assim o viewport compreende apenas os pontos que estão abaixo de todos os planos ao mesmo tempo. As normais que definem os planos são descritas na equação~\ref{eq:normals}, onde $fov_X$ e $fov_Y$ são os ângulos horizontal e vertical do FOV, respectivamente.
+
+\begin{align}
+	N &=\begin{bmatrix}
+		0 & -cos\left(\dfrac{fov_Y}{2}\right) & -sin\left(\dfrac{fov_Y}{2}\right) \\
+		0 & sin\left(\dfrac{fov_Y}{2}\right) & -cos\left(\dfrac{fov_Y}{2}\right) \\
+		cos\left(\dfrac{fov_X}{2}\right) & 0 & -sin\left(\dfrac{fov_X}{2}\right)\\
+		-sin\left(\dfrac{fov_X}{2}\right) & 0 & -cos\left(\dfrac{fov_X}{2}\right)
+	\end{bmatrix}
+	\label{eq:normals}
+\end{align}
+
+Após o movimento de cabeça, as normais são rotacionadas de acordo com as coordenadas de corpo $H(yaw, pitch, roll)$ e assumem nova posição $ N_R $ dado pelo produto matricial do vetor de normais com a matriz de rotação $ N_R = \textbf{N} \times \textbf{R}$. Um pixel $ \textbf{P}$ qualquer no espaço cartesiano pertencerá ao viewport se o produto interno $ N.T \dot P <=0 $ para todas as normais, ou seja, estão abaixo das normais após as normais forem rotacionadas durante o movimento da cabeça.
+
 
 \section{Ladrilhamento}
 
@@ -252,38 +279,6 @@ Em seguida, a projeção é segmentada espacialmente em vídeos independentes. C
 O codificador H.265 permite que o vídeo seja segmentado em ladrilhos internamente, restringindo o compensador de movimento para dentro de um ladrilho~\cite{ITU-T2018}. Como os ladrilhos não possuem dependência entre sí, esta técnica permite a decodificação em paralelo de todos os ladrilhos com uma única instância do decodificador. Os trabalhos apresentados em~\cite{Concolato2017, LeFeuvre2016} descrevem um sistema que se aproveita desta capacidade para segmentar a projeção em ladrilhos e utilizar o protocolo DASH SRD para a descrição da relação espacial entre os mesmos. Este recurso foi implementado no tocador do software GPAC\footnote{https://gpac.io/}, porém as modificações no decodificador não fazem parte do padrão H.265 nem do DASH e o uso em sistemas Android (o sistema operacional mais comum dos HMD) não funciona muito bem. Por isso a maioria dos pesquisadores que adotam a abordagem do streaming de ladrilhos adaptado ao viewport realiza o ladrilhamento antes da codificação.
 
 
-
-\subsection{O Viewport (projeção gnomônica)}
-
-A extração do viewport é feita através da projeção Gnomônica, também conhecida como projeção retilinear. Nesta projeção, os pontos da esfera são projetados a partir do centro da esfera a um plano tangente a esfera\footnote{https://www.wolframalpha.com/input?i=rectilinear+projection}.  Como o viewport é definido como a porção da esfera que é visível pelo usuário e a visão humano  é limitada ao campo de visão (do inglês FOV - \textit{ Field of View}), os HMD exibem ao usuário a projeção com um FOV de aproximadamente $110^\circ\times 90^\circ$. O plano que será projetado é tangente a esfera no centro do FOV e se move junto com a cabeça do usuário. 
-
-
-Como o viewport é definido como a porção da esfera que é visível pelo usuário e a visão humano  é limitada ao campo de visão (do inglês FOV - \textit{ Field of View}), os HMD extraem o viewport com FOV de aproximadamente $110^\circ\times 90^\circ$. 
-
-Para isto os ponto da esfera que pertencem ao viewport são projetados a um plano tangente a esfera no ponto $ P(0, 0, 1) $ utilizando a projeção Gnomônica ou Retilínea\footnote{https://www.wolframalpha.com/input?i=rectilinear+projection}, como pode ser visto na figura~\ref{fig:projecao_viewport}. 
-
-\begin{figure}[h]
-        \centering
-        \includegraphics[width=1.0\linewidth]{fig/projecao_viewport.png}
-        \caption{Extração do viewport usando projeção retilinear ou gnomônica.}
-        \label{fig:projecao_viewport}
-\end{figure}
-
-Primeiramente, a matriz da imagem do viewport é pre alocada de acordo com a resolução exibida para o usuário. Em vez do valor do pixel, cada célula da matriz é preenchida com a posição do pixel na esfera usando coordenadas horizontais, de $-fov_X$ a $+fov_X$ e de $-fov_Y$ a $+fov_y$. Em seguida, cada coordenada é convertida para o sistema cartesiano usando as equações~\ref{eq:cart2hcs}. Finalmente as coordenadas cartesianas são convertidas para o domínio da projeção, seja equirretangular ou cubemap. Obviamente os pontos não serão os mesmos, então é usado algum método de interpolação, com interpolação por vizinho mais próximo ou interpolação linear. Agora basta mapear os pixels do viewport com os pixels da projeção.
-
-Por outro lado, para verificar quais ladrilhos pertencem ao viewport, é preciso verificar se um pixel da projeção está sendo visualizado. Para isto, consideramos que o viewport compreende o espaço interno da intersecção de quatro planos que passam pelo centro da esfera e possuem inclinação relativas ao FOV do viewport e ao eixo Z. Por exemplo, um FOV de $ 120^\circ\times 90^\circ $ está limitado a 60° à direita e -60° à esquerda do eixo Z e 45° acima e -45° abaixo do eixo Z. Estes planos definem os limites superiores, inferiores, esquerdo e direito do viewport. Estas normais devem apontar para o lado de fora do viewport, assim o viewport compreende apenas os pontos que estão abaixo de todos os planos ao mesmo tempo. As normais que definem os planos são descritas na equação~\ref{eq:normals}, onde $fov_X$ e $fov_Y$ são os ângulos horizontal e vertical do FOV, respectivamente.
-
-\begin{align}
-        N &=\begin{bmatrix}
-                0 & -cos\left(\dfrac{fov_Y}{2}\right) & -sin\left(\dfrac{fov_Y}{2}\right) \\
-                0 & sin\left(\dfrac{fov_Y}{2}\right) & -cos\left(\dfrac{fov_Y}{2}\right) \\
-                cos\left(\dfrac{fov_X}{2}\right) & 0 & -sin\left(\dfrac{fov_X}{2}\right)\\
-                -sin\left(\dfrac{fov_X}{2}\right) & 0 & -cos\left(\dfrac{fov_X}{2}\right)
-        \end{bmatrix}
-        \label{eq:normals}
-\end{align}
-
-Após o movimento de cabeça, as normais são rotacionadas de acordo com as coordenadas de corpo $H(yaw, pitch, roll)$ e assumem nova posição $ N_R $ dado pelo produto matricial do vetor de normais com a matriz de rotação $ N_R = \textbf{N} \times \textbf{R}$. Um pixel $ \textbf{P}$ qualquer no espaço cartesiano pertencerá ao viewport se o produto interno $ N.T \dot P <=0 $ para todas as normais, ou seja, estão abaixo das normais após as normais forem rotacionadas durante o movimento da cabeça.
 
 \section{Qualidade objetiva do vídeo}
 
