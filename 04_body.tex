@@ -201,6 +201,7 @@ mostra a tabela~\ref{tab:vu2xyz}. Por fim, as coordenadas $uv$ são convertidas 
 \end{table}
 
 
+\begin{table}[h]
 	\centering
 	\caption{Tabela de coordenadas $(X, Y, Z)$ em função de $(U, V)$}
 	\label{tab:vu2xyz}
@@ -260,7 +261,7 @@ O codificador H.265 permite que o vídeo seja segmentado em ladrilhos internamen
 
 O viewport é definido como a porção da esfera que é visível pelo usuário. Como a visão humano (FOV -\textit{ Field of View}) é limitada, os HMD reproduzem um FOV de aproximadamente $120^\circ\times90^\circ$. Para isto os ponto da esfera que pertencem ao viewport são projetados a um plano tangente a esfera no ponto $ P(0, 0, 1) $ utilizando a projeção Gnomônica ou Retilínea\footnote{https://www.wolframalpha.com/input?i=rectilinear+projection}, como pode ser visto na figura~\ref{fig:projecao_viewport}. 
 
-\begin{figure}[htb]
+\begin{figure}[h]
         \centering
         \includegraphics[width=1.0\linewidth]{fig/projecao_viewport.png}
         \caption{Extração do viewport usando projeção retilinear ou gnomônica.}
@@ -290,7 +291,7 @@ No processo de preparação para o \textit{streaming} de vídeos esféricos, a e
 
 Assim, a qualidade objetiva da viewport é definida como a disparidade entre o viewport extraído do vídeo codificado e o viewport de um vídeo de referência.   A Figura~\ref{fig:QualityWorkflow} ilustra como medir a qualidade objetiva do \textit{viewport}, considerando a esfera sem degradação e a esfera recuperada após a compressão. A viewport precisa ser extraída com base na posição da cabeça do usuário em ambos os vídeos de referência e codificado, assim o MSE e SSIM devem ser calculados entre esses quadros. O MSE foi usado no lugar do PSNR, pois o PSNR deve ser calculado apenas após o cálculo da média do MSE de todos os quadros de um vídeo, como mostra a documentação do filtro de PSNR do ffmpeg\footnote{https://ffmpeg.org/ffmpeg-filters.html}. As operações de cálculo MSE e do SSIM foram calculadas usando a biblioteca scikit-image. Apesar do MSE e o SSIM falhem ao tentar medir qualidade sob certas condições, elas são suficientes para se medir distorções produzidas por artefatos esperados como bordas de ladrilho, borrado e blocado.~\cite{Bovik2009} 
 
-\begin{figure}[ht]
+\begin{figure}[h]
         \centering
         \includegraphics[width=0.8\linewidth]{fig/Project_Quality_Workflow_2.png}
         \caption{Avaliação de qualidade objetiva do viewport.}
@@ -314,7 +315,7 @@ Por outro lado, para sistemas de transmissão adaptativos como o MPEG DASH, a qu
 
 No entanto, é importante notar que as métricas SSIM e PSNR podem não ser adequadas para avaliar diretamente a qualidade da projeção, especialmente considerando as distorções introduzidas durante o processo de projeção. Consequentemente, métricas de qualidade esféricas foram desenvolvidas para avaliar o nível objetivo de qualidade de uma projeção. A parte superior da Figura \ref{fig:QualityDiagram} ilustra como a “qualidade objetiva da projeção” deve ser medida. Métricas de qualidade devem ser aplicadas entre a projeção antes da codificação (vídeo de referência) e a projeção decodificada após a compressão (vídeo degradado).
 
-\begin{figure}[htb]
+\begin{figure}[h]
         \centering
         \includegraphics[width=0.7\linewidth]{fig/diagrama e qualidade 1.png}
         \caption{Avaliação de qualidade objetiva da projeção.}
@@ -401,7 +402,7 @@ Em um sistema de streaming adaptativo como DASH, os chunks do vídeo devem ser c
 
 O fluxo de trabalho da caracterização é visto na figura~\ref{fig:fluxograma1}. Os vídeos selecionados São os mesmos empregados no estudo de Nasrabadi~\cite{Nasrabadi2019}. Seis vídeos foram gravados pessoalmente pelo autor em projeção equirretangular. Os demais vídeos foram obtidos do YouTube em projeção cúbica. O processo de download foi executado usando a ferramenta JDownloader\footnote{https://jdownloader.org/} e, devido a variabilidade de qualidades e formatos abrangendo da plataforma, demos preferência a vídeos codificados com h.264, resolução de 4K e 30 fps (quadros por segundo). Apesar disto, os vídeos estavam em duas projeções diferentes e possuíam grande variabilidade de resoluções e taxas de quadro. Isto nos levou a padronizá-los afim de podermos comparar suas características. 
 
-\begin{figure}
+\begin{figure}[h]
         \centering
         \includegraphics[width=0.7\linewidth]{fig/Fluxograma1.pdf}
         \caption{Fluxograma para captura de métricas de desempenho.}
@@ -570,7 +571,7 @@ Para a análise das distribuições estatística dos chunks codificados, emprega
 % kd o diagrama?
 Para a caracterização do que o usuário experimenta, a posição da cabeça do usuário é utilizada para identificar as ladrilhos necessárias para a reconstrução da viewport. Foi desenvolvido uma bibliteca para conversão de coordenadas na esfera e um mecanismo para seleção de ladrilhos com base na posição da cabeça do usuário. Este mecanismo foi implementado em Python, e, quando fornecido o padrão de ladrilhamento, dimensões da projeção e posição da viewport, ele retorna uma lista de ladrilhos que estão visíveis na viewport. Existem vários métodos para selecionar e priorizar ladrilhos~\cite{Nguyen2020}. Porém, neste trabalho, focamos em considerar apenas os ladrilhos visíveis, essenciais para a construção da viewport, conforme ilustrado na Figura~\ref{fig:tilesSelection}. Este mecanismo foi aplicado com um banco de dados de posição da cabeça do usuário para calcular uma lista de ladrilhos que aparecem na viewport durante a reprodução.
 
-\begin{figure}[htb]
+\begin{figure}[h]
         \centering
         \includegraphics[width=0.6\linewidth]{fig/tiles selection simples.png}
         \caption{Mecanismo para seleção de ladrilhos.}
@@ -579,7 +580,7 @@ Para a caracterização do que o usuário experimenta, a posição da cabeça do
 
 O banco de dados de movimentos da cabeça foi gerado por Nasrabadi \cite{Nasrabadi2019}. Este banco de dados compilou a posição central do viewport na esfera para 60 voluntários (30 voluntários por vídeo), representados em quatérnions e em vetores cartesianos a uma taxa variável. Utilizando marcas de tempo foi feita a interpolação para que todas as amostras estejam à taxa de 30 Hz. A figura \ref{fig:datasetSpeedmap}, extraída do trabalho de Nasrabadi, fornece um mapa da velocidade angular média para todos os usuários em cada vídeo. Como observado pelo autor, a velocidade angular média dos vídeos depende do usuário, o que significa que um usuário com velocidade alta em um vídeo tende a exibir velocidade alta em todos os vídeos. 
 
-\begin{figure}
+\begin{figure}[h]
         \centering
         \includegraphics[width=0.8\linewidth]{fig/datasetSpeedmap.png}
         \caption{Mapa da velocidade angular média de todos os voluntários para todos os grupos de vídeo. Extraído de  \cite{Nasrabadi2019}}
@@ -655,7 +656,7 @@ Já a métrica SSIM não apresenta diferença significativa entre os ladrilhamen
 
 A figura~\ref{Fig:boxplottiling} mostra o boxpplot para cada métrica. Cada caixa representa o segundo e o terceiro quartil e a linha interna representa a mediana. Os traços acima e abaixo da caixa representam os valores máximos e mínimos. Apesar do desvio padrão ser alto, a maior parte dos valores estão concentrados em torno da mediana, indicando que, apesar da alta variação nestas métricas, apenas em poucos casos ocorrerão desvios.
 
-\begin{figure}[htb]
+\begin{figure}[h]
          \centering         
 
            \includegraphics[width=0.9\columnwidth]{fig/ByPattern/boxplot_pattern.pdf}
@@ -765,7 +766,7 @@ Este trabalho apresentou uma modelagem de transmissão de streaming de vídeo em
 
 Como trabalho futuro planejamos projetar um algoritmo de adaptação de qualidade utilizando as métricas de desempenho analisadas e então avaliá-lo em um ambiente virtual de simulação de rede usando o simulador NS-3\footnote{https://www.nsnam.org/} conectado a servidores locais reais rodando em containers Docker. Considerando o registro de movimento de cabeça e que todos os segmentos acessados pelo cliente serão sempre os mesmos para cada usuário, será possível avaliar diferentes tipos de algoritmos sob diferentes infraestruturas sob as mesmas condições de usuário. Então, usando o modelo de qualidade desenvolvido neste trabalho será possível avaliar de forma objetiva a capacidade dos algoritmos se adaptarem às condições de rede em um ambiente bem controlado, como o mostra a figura~\ref{fig:modelo_simulação}.
 
-\begin{figure}[htb]
+\begin{figure}[h]
         \centering
         \includegraphics[width=0.8\linewidth]{fig/modelo_simulação.png}
         \caption{Modelo de simulação que será usado para avaliação}
