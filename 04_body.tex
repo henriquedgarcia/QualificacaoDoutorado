@@ -228,8 +228,32 @@ O processo de arranjar as faces do cubo em uma única imagem é chamada de empac
 \end{figure}
 
 
+\section{Ladrilhamento}
+
+Em seguida, a projeção é segmentada espacialmente em vídeos independentes. Cada vídeo é chamado de ladrilho e possuem o mesmo tamanho. Não é possível segmentar o vídeo em qualquer numero de ladrilhos, pois os codificadores possuem limite para o tamanho do quadro que será codificada. O codificador H.265, por exemplo, suporta vídeos com quadros de luminância de no mínimo $176\times144$ pixels~\cite{Sullivan2012a}.
+
+\begin{table}[h]
+	\centering
+	\caption{Detalhes do ladrilhamento e resoluções resultantes.}
+	\label{tab:ladrilhamento_resolucoes}
+	\begin{tabular}{|c|p{2.5cm}|c|p{2.5cm}|c}
+		\cline{1-4}
+		\textbf{Ladrilhamento} & \centering\textbf{Quantidade de ladrilhos} & \textbf{Projeção} & \centering \textbf{Pixels por ladrilho} & \\ \cline{1-4}
+		\multirow{2}{*}{\textbf{1x1}} & \centering\multirow{2}{*}{1} & CMP & \centering 4320x2160 & \\ \cline{3-4} 
+		&   & ERP & \centering 3240x2160 & \\ \cline{1-4}
+		\multirow{2}{*}{\textbf{3x2}} & \centering \multirow{2}{*}{6} & CMP & \centering 1440x1080 & \\ \cline{3-4} 
+		&   & ERP & \centering 1080x1080 & \\ \cline{1-4}
+		\multirow{2}{*}{\textbf{6x4}} & \centering \multirow{2}{*}{24} & CMP & \centering 720x540 & \\ \cline{3-4} 
+		&   & ERP & \centering 540x540 & \\ \cline{1-4}
+		\multirow{2}{*}{\textbf{9x6}} & \centering \multirow{2}{*}{54} & CMP & \centering 480x360 & \\ \cline{3-4} 
+		&   & ERP & \centering 360x360  & \\ \cline{1-4}
+		\multirow{2}{*}{\textbf{ 12x8}} & \centering \multirow{2}{*}{96} & CMP & \centering 360x270 & \\ \cline{3-4} 
+		&    & ERP & \centering 270x270 & \\ \cline{1-4}
 	\end{tabular}
 \end{table}
+
+O codificador H.265 permite que o vídeo seja segmentado em ladrilhos internamente, restringindo o compensador de movimento e alocando os slices para dentro de um ladrilho~\cite{ITU-T2018}. Como os ladrilhos não possuem dependencia entre sí, esta técnica permite a decodificação em paralelo de todos os ladrilhos com uma única instância do decodificador. Os trabalhos apresentados em~\cite{Concolato2017, LeFeuvre2016} descrevem um sistema que se aproveita desta capacidade para segmentar a projeção em ladrilhos e utilizar o protocolo DASH SRD para a descrição da relação espacial entre os mesmos. Este recurso foi implementado no tocador do software GPAC\footnote{https://gpac.io/}, porém as modificações no decodificador não fazem parte do padrão e o suporte para sistemas Android (o sistema operacional mais comum dos HMD) não funciona muito bem. Por isso a maioria dos pesquisadores que adotam a abordagem do streaming de ladrilhos adaptado ao viewport realiza o ladrilhamento antes da codificação~.
+
 
 
 \subsection{O Viewport}
