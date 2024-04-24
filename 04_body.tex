@@ -78,23 +78,19 @@ Baseado na biblioteca 360lib da MPEG\footnote{https://mpeg.chiariglione.org/stan
 
 \subsubsection{Sistema de Coordenadas Cartesiano}
 
-O sistema de coordenadas cartesiano, dextrogiro, representado na figura~\ref{fig:coordenadas}{(a) é usado para descrever e operar a esfera no espaço de 3 dimensões através de operações de álgebra linear. O vídeo esférico é representado com o usuário no centro de uma esfera de raio 1. Na posição inicial, o eixo Z aponta para a frente, o eixo X aponta para a direita e o eixo Y aponta para baixo. O arco azul representa o FOV do usuário. Assim, qualquer ponto na esfera pode ser representado por um vetor $ \overrightarrow{v} = (x,y,z) $.
+O sistema de coordenadas cartesiano, dextrogiro, representado na figura~\ref{fig:coordenadas} é usado para descrever e operar a esfera no espaço de 3 dimensões através de operações de álgebra linear. O vídeo esférico é representado com o usuário no centro de uma esfera de raio 1. Na posição inicial, o eixo Z aponta para a frente, o eixo X aponta para a direita e o eixo Y aponta para baixo. O arco azul representa o FOV do usuário. Assim, qualquer ponto na esfera pode ser representado por um vetor $ \overrightarrow{v} = (x,y,z) $.
 
 \begin{figure}[h]
-	\centering
-	
+	\centering	
 	\subfigure[Sistema de coordenadas de referência. \label{fig:coordenadas}]
-	{\includegraphics[width=0.30\linewidth]{fig/coordenadas.png}} \quad
-	
+	{\includegraphics[width=0.40\linewidth]{fig/coordenadas.png}} \quad	 \quad	
 	\subfigure[ângulos de Euler e sua representação do movimento de cabeça. \label{fig:bcs}]
-	{\includegraphics[width=0.30\linewidth]{fig/bcs.png}} \quad
-	
+	{\includegraphics[width=0.40\linewidth]{fig/bcs.png}}
 	\caption{Os Sistemas de Coordenadas em um espaço cartesiano}
 	\label{fig:coord_sis}
 \end{figure}
 
-Para descrever a direção da cabeça do usuário, consideramos que rodar a cabeça em uma direção é equivalente a rodar a esfera na direção oposta. Para isso, usamos um conjunto de ângulos de Euler (yaw, pitch e roll) para realizar a rotação da esfera usando a sequencia y-x-z. O yaw indica a rotação do eixo y, o pitch a rotação do eixo X e o Roll a rotação do eixo Z. Tal convenção também conhecida como angulos de Tait–Bryan é muito usado em aplicações aeroespaciais. Estes ângulos coincide com os angulos do sistema de coordenadas horizontal facilitando a identificação do centro do viewport. Sua valores são relativos à posição inicial (elevação=0 e azimute=0 no sistema horizontal, ou o vetor (0, 0, 1) no sistema cartesiano), como mostra a figura~\ref{fig:bcs}. Por se tratar de rotação, os valores dos ângulos podem assumir qualquer valor valor real (em radianos).
-É convencionado que todas as rotações em sentido horário são positivas e em sentido anti-horário são negativas. Assim, olhar para cima possui um \textit{pitch} positivo, olhar para a direita possui um \textit{yaw} positivo e rodar a cabeça em sentido horário possui um \textit{roll} positivo.
+Para descrever a direção da cabeça do usuário, consideramos que rodar a cabeça em uma direção é equivalente a rodar a esfera na direção oposta. Para isso, usamos um conjunto de ângulos de Euler (yaw, pitch e roll) para realizar a rotação da esfera usando a sequencia y-x-z. A relação dos ângulos com o movimento da cabeça pode ser visto na Figura~\ref{fig:bcs}. O yaw indica a rotação do eixo y, o pitch a rotação do eixo X e o Roll a rotação do eixo Z. Tal convenção também conhecida como angulos de Tait–Bryan é muito usado em aplicações aeroespaciais. Estes ângulos coincide com os angulos do sistema de coordenadas horizontal facilitando a identificação do centro do viewport. Sua valores são relativos à posição inicial (elevação=0 e azimute=0 no sistema horizontal, ou o vetor (0, 0, 1) no sistema cartesiano). Por se tratar de rotação, os valores dos ângulos podem assumir qualquer valor valor real (em radianos). Por convenção, todas as rotações em sentido horário são positivas e em sentido anti-horário são negativas. Assim, olhar para cima possui um \textit{pitch} positivo, olhar para a direita possui um \textit{yaw} positivo e rodar a cabeça em sentido horário possui um \textit{roll} positivo.
 
 A rotação de um ponto no sistema de referência (fixo) com os ângulos de Euler pode ser representada por uma equação na forma matricial $\overrightarrow{V}^T = \overrightarrow{R} \times \overrightarrow{v}^T $, onde $\overrightarrow{V}^T = (x',y',z')$ é a nova posição, $\overrightarrow{V}^T = (x,y,z)$ é o vetor no sistema de referência e $\overrightarrow{R}$ é a matriz de rotação dada pela equação~\ref{eq:matrotation}.
 
@@ -253,13 +249,18 @@ Em seguida, a projeção é segmentada espacialmente em vídeos independentes. C
 	\end{tabular}
 \end{table}
 
-O codificador H.265 permite que o vídeo seja segmentado em ladrilhos internamente, restringindo o compensador de movimento e alocando os slices para dentro de um ladrilho~\cite{ITU-T2018}. Como os ladrilhos não possuem dependencia entre sí, esta técnica permite a decodificação em paralelo de todos os ladrilhos com uma única instância do decodificador. Os trabalhos apresentados em~\cite{Concolato2017, LeFeuvre2016} descrevem um sistema que se aproveita desta capacidade para segmentar a projeção em ladrilhos e utilizar o protocolo DASH SRD para a descrição da relação espacial entre os mesmos. Este recurso foi implementado no tocador do software GPAC\footnote{https://gpac.io/}, porém as modificações no decodificador não fazem parte do padrão e o suporte para sistemas Android (o sistema operacional mais comum dos HMD) não funciona muito bem. Por isso a maioria dos pesquisadores que adotam a abordagem do streaming de ladrilhos adaptado ao viewport realiza o ladrilhamento antes da codificação~.
+O codificador H.265 permite que o vídeo seja segmentado em ladrilhos internamente, restringindo o compensador de movimento para dentro de um ladrilho~\cite{ITU-T2018}. Como os ladrilhos não possuem dependência entre sí, esta técnica permite a decodificação em paralelo de todos os ladrilhos com uma única instância do decodificador. Os trabalhos apresentados em~\cite{Concolato2017, LeFeuvre2016} descrevem um sistema que se aproveita desta capacidade para segmentar a projeção em ladrilhos e utilizar o protocolo DASH SRD para a descrição da relação espacial entre os mesmos. Este recurso foi implementado no tocador do software GPAC\footnote{https://gpac.io/}, porém as modificações no decodificador não fazem parte do padrão H.265 nem do DASH e o uso em sistemas Android (o sistema operacional mais comum dos HMD) não funciona muito bem. Por isso a maioria dos pesquisadores que adotam a abordagem do streaming de ladrilhos adaptado ao viewport realiza o ladrilhamento antes da codificação.
 
 
 
-\subsection{O Viewport}
+\subsection{O Viewport (projeção gnomônica)}
 
-O viewport é definido como a porção da esfera que é visível pelo usuário. Como a visão humano (FOV -\textit{ Field of View}) é limitada, os HMD reproduzem um FOV de aproximadamente $120^\circ\times90^\circ$. Para isto os ponto da esfera que pertencem ao viewport são projetados a um plano tangente a esfera no ponto $ P(0, 0, 1) $ utilizando a projeção Gnomônica ou Retilínea\footnote{https://www.wolframalpha.com/input?i=rectilinear+projection}, como pode ser visto na figura~\ref{fig:projecao_viewport}. 
+A extração do viewport é feita através da projeção Gnomônica, também conhecida como projeção retilinear. Nesta projeção, os pontos da esfera são projetados a partir do centro da esfera a um plano tangente a esfera\footnote{https://www.wolframalpha.com/input?i=rectilinear+projection}.  Como o viewport é definido como a porção da esfera que é visível pelo usuário e a visão humano  é limitada ao campo de visão (do inglês FOV - \textit{ Field of View}), os HMD exibem ao usuário a projeção com um FOV de aproximadamente $110^\circ\times 90^\circ$. O plano que será projetado é tangente a esfera no centro do FOV e se move junto com a cabeça do usuário. 
+
+
+Como o viewport é definido como a porção da esfera que é visível pelo usuário e a visão humano  é limitada ao campo de visão (do inglês FOV - \textit{ Field of View}), os HMD extraem o viewport com FOV de aproximadamente $110^\circ\times 90^\circ$. 
+
+Para isto os ponto da esfera que pertencem ao viewport são projetados a um plano tangente a esfera no ponto $ P(0, 0, 1) $ utilizando a projeção Gnomônica ou Retilínea\footnote{https://www.wolframalpha.com/input?i=rectilinear+projection}, como pode ser visto na figura~\ref{fig:projecao_viewport}. 
 
 \begin{figure}[h]
         \centering
