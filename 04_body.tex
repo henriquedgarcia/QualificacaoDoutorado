@@ -13,7 +13,7 @@ Streaming de vídeo esféricos, ou vídeos 360°, é uma relativamente nova apli
 
 De todas as aplicações para VR, o streaming de vídeo esférico é o que possui a maior taxa de bits, pois toda a projeção é transmitida em Ultra Alta Definição (do inglês UHD - Ultra High Definition). De acordo com~\cite{Zhou2017, Liu2017}, empresas como YouTube e Facebook usam a arquitetura tradicional de streaming de vídeo 2D para transmitir a projeção dos vídeos esféricos. Inicialmente a projeção é comprimida com H.264 ou VP9 e disponibilizados através do manifestos de protocolos com o Dynamic Adaptive Streaming over HTTP (DASH) que disponibilizam segmentos de vídeo com duração constante, codificados sob diversas qualidades/taxas de bits diferentes. Assim, analisando o buffer e/ou a largura de banda disponível, a aplicação cliente poderá mudar a qualidade da reprodução de acordo com a disponibilidade dos recursos do dispositivo. Por exemplo, o tocador do vídeo poderá reduzir a qualidade se a largura de banda disponível for reduzida ou se a bateria estiver acabando.
 
-No entanto, ao contrário dos vídeos 2D, um usuário deve visualizar apenas uma fração de todo o vídeo esférico devido à limitação do campo de visão humano (FOV). Conforme mostrado na Figura~\ref{fig:viewport1}(a), a região do vídeo que é exibido no HMD é chamada viewport e todos os pixels fora desta região não serão visualizados pelo usuário. Dependendo do fabricante do HMD o FOV pode variar, mas geralmente possui $\times90^{\circ}$ de abertura vertical e de $120^{\circ}$ a $90^{\circ}$ de abertura horizontal, o que corresponde a aproximadamente 16\% da esfera~\cite{Afzal2017}. Por isso, para garantir boa qualidade exibida no HMD, a projeção deve ser codificada em alta resolução, resultando em arquivos muito grande e necessitando de tanta largura de banda quanto for a qualidade da codificação. 
+No entanto, ao contrário dos vídeos 2D, um usuário deve visualizar apenas uma fração de todo o vídeo esférico devido à limitação do campo de visão humano (FOV). Conforme mostrado na Figura~\ref{fig:viewport1}(a), a região do vídeo que é exibido no HMD é chamada viewport e todos os pixels fora desta região não serão visualizados pelo usuário. Dependendo do fabricante do HMD o FOV pode variar, mas geralmente possui $\times90^{\circ}$ de abertura vertical e de $120^{\circ}$ a $90^{\circ}$ de abertura horizontal, o que corresponde a aproximadamente 16\% da esfera~\cite{Afzal2017}. Por isso, para garantir boa qualidade exibida no HMD, a projeção deve ser codificada em alta resolução, resultando em arquivos muito grande e necessitando de tanta largura de banda quanto for a qualidade da codificação.
 
 \begin{figure}[h]
         \centering
@@ -24,7 +24,7 @@ No entanto, ao contrário dos vídeos 2D, um usuário deve visualizar apenas uma
 
 Desta forma, transmitir toda a projeção pode desperdiçar diversos recursos do sistema como largura de banda, tempo de processamento, bateria, etc. Dispositivos móveis tendem a sofrer mais com este tipo de aplicação que podem ter sua bateria drenada rapidamente e sofrer aquecimento, enquanto que a conexão móvel é limitada e mais cara. Além disso, os algoritmos de Adaptação da Taxa de Bits (do inglês ABR - Adaptive Bitrate) usados pelo protocolo DASH utilizam informações sobre estes recursos para determinar a qualidade do vídeo que deve ser solicitada ao servidor. Caso não haja recursos suficientes o algoritmo reduz a qualidade do vídeo para conseguir manter a reprodução do vídeo constante.
 
-Afim de economizar recursos, vários trabalhos~\cite{Alface2012, Zare2016, Qian2018, Liu2017, Graf2017, Xiao2018, Nasrabadi2019} sugerem uma abordagem baseada na segmentação espacial da projeção em vídeos independentes chamados ladrilhos, de modo que o cliente possa solicitar somente os ladrilhos em uma região de interesse (do inglês ROI - Region Of Interest) que serão vistos pelo usuário nos próximos segundos. A figura~\ref{fig:viewport2} apresenta esta abordagem utilizando um padrão de ladrilhamento $4 \times 4$. A ROI será todos os pixels cobertos pelos ladrilhos que tocam o viewport. Desta forma, somente os ladrilhos tocados pelo viewport poderão ser requisitados com maior qualidade, enquanto os ladrilhos não vistos serão transmitidos em baixa qualidade ou mesmo não serão transmitidos. 
+Afim de economizar recursos, vários trabalhos~\cite{Alface2012, Zare2016, Qian2018, Liu2017, Graf2017, Xiao2018, Nasrabadi2019} sugerem uma abordagem baseada na segmentação espacial da projeção em vídeos independentes chamados ladrilhos, de modo que o cliente possa solicitar somente os ladrilhos em uma região de interesse (do inglês ROI - Region Of Interest) que serão vistos pelo usuário nos próximos segundos. A figura~\ref{fig:viewport2} apresenta esta abordagem utilizando um padrão de ladrilhamento $4 \times 4$. A ROI será todos os pixels cobertos pelos ladrilhos que tocam o viewport. Desta forma, somente os ladrilhos tocados pelo viewport poderão ser requisitados com maior qualidade, enquanto os ladrilhos não vistos serão transmitidos em baixa qualidade ou mesmo não serão transmitidos.
 
 \begin{figure}[h]
 	\centering
@@ -41,13 +41,13 @@ Afim de permitir a reprodutibilidade do comportamento do usuário sob diferentes
 
 Até o momento não existe na literatura nenhum banco de dados que apresente os dados do streaming de vídeos processados da forma como propomos, onde a codificação é feita baseada na qualidade e não na taxa de bits usando o codificador HEVC. Optamos fazer a compressão usando o parâmetro CRF pois se a codificação for feita considerando a taxa de bits poderá haver grande desperdício de largura de banda com ladrilhos que são poucos complexos de codificar, como por exemplo o chão ou o teto. Além disso, caso os ladrilhos possuam grande diferença de qualidade dentro de uma mesma representação, haverá bordas em torno dos ladrilhos, o que degradará a qualidade de experiência.
 
-O principal objetivo deste trabalho é criar um ambiente padronizado e controlado para a comparação de diferentes sistema de transmissão de vídeos esféricos segmentados em ladrilhos usando protocolos adaptativos como o DASH. No caminho, nossos objetivos específicos são: 
+O principal objetivo deste trabalho é criar um ambiente padronizado e controlado para a comparação de diferentes sistema de transmissão de vídeos esféricos segmentados em ladrilhos usando protocolos adaptativos como o DASH. No caminho, nossos objetivos específicos são:
 
 \begin{enumerate}
 	\item Caracterizar os ladrilhos dos vídeos de diferentes categorias, sob diferentes projeções e segmentados em diferentes padrões de ladrilhamento. Extraímos a taxa de bits, medimos o tempo de decodificação para cada chunk e calculamos diversas métricas de qualidade objetivas baseadas no erro quadrático médio tanto das projeções quanto do viewport exbido ao usuário.
-	
+
 	\item Estimar o limite inferior de recursos necessários para a reprodução dos vídeos esféricos para diferentes usuários. Usando o banco de dados de movimento de cabeças disponibilizado no trabalho de Nasrabadi~\cite{Nasrabadi2019}, extraímos o comportamento das requisições dos ladrilhos em um caso ideal e calculamos a qualidade do vídeo apresentado no viewport em termos do MSE. Aproveitando a taxonomia desenvolvida por Nasrabadi ainda agrupamos os resultados considerando o tipo de movimento da câmera e o numero de objetos em movimento no vídeo.
-	
+
 	\item Desenvolver um conjunto de ferramentas para manipulação das projeções equirretangular e cubemap, conversões de coordenadas 3D e 2D, extração do viewport, seleção de ladrilhos e cálculo de métricas de qualidade.
 \end{enumerate}
 
@@ -74,16 +74,16 @@ No vídeo esférico, diferente do vídeo tradicional que é plano, os quadros do
 
 \subsection{Os sistemas de coordenadas}
 
-Baseado na biblioteca 360lib da MPEG\footnote{https://mpeg.chiariglione.org/standards/exploration/future-video-coding/n17197-algorithm-descriptions-projection-format-conversion}, utilizamos dois sistemas de coordenadas e deduzimos suas relações para realizar a caracterização proposta. Usamos vetores no espaço cartesiano de três dimensões como referencial inercial que contém a esfera do vídeo. Assim, o movimento de cabeça do usuário pode ser descrito utilizando angulos de euler afim de rotacionar o espaço cartesiano e extrair o viewport.  Além disto, como sistema de coordenadas auxiliar, usamos uma variação do sistema de coordenadas esférico chamado de sistema de coordenadas horizontal afim de identificar os pixels na esfera sem nos preocuparmos com o comprimento dos vetores. A seguir descrevemos mais detalhadamente cada sistema. 
+Baseado na biblioteca 360lib da MPEG\footnote{https://mpeg.chiariglione.org/standards/exploration/future-video-coding/n17197-algorithm-descriptions-projection-format-conversion}, utilizamos dois sistemas de coordenadas e deduzimos suas relações para realizar a caracterização proposta. Usamos vetores no espaço cartesiano de três dimensões como referencial inercial que contém a esfera do vídeo. Assim, o movimento de cabeça do usuário pode ser descrito utilizando angulos de euler afim de rotacionar o espaço cartesiano e extrair o viewport.  Além disto, como sistema de coordenadas auxiliar, usamos uma variação do sistema de coordenadas esférico chamado de sistema de coordenadas horizontal afim de identificar os pixels na esfera sem nos preocuparmos com o comprimento dos vetores. A seguir descrevemos mais detalhadamente cada sistema.
 
 \subsubsection{Sistema de Coordenadas Cartesiano}
 
 O sistema de coordenadas cartesiano, dextrogiro, representado na figura~\ref{fig:coordenadas} é usado para descrever e operar a esfera no espaço de 3 dimensões através de operações de álgebra linear. O vídeo esférico é representado com o usuário no centro de uma esfera de raio 1. Na posição inicial, o eixo Z aponta para a frente, o eixo X aponta para a direita e o eixo Y aponta para baixo. O arco azul representa o FOV do usuário. Assim, qualquer ponto na esfera pode ser representado por um vetor $ \overrightarrow{v} = (x,y,z) $.
 
 \begin{figure}[h]
-	\centering	
+	\centering
 	\subfigure[Sistema de coordenadas de referência. \label{fig:coordenadas}]
-	{\includegraphics[width=0.40\linewidth]{fig/coordenadas.png}} \quad	 \quad	
+	{\includegraphics[width=0.40\linewidth]{fig/coordenadas.png}} \quad	 \quad
 	\subfigure[ângulos de Euler e sua representação do movimento de cabeça. \label{fig:bcs}]
 	{\includegraphics[width=0.40\linewidth]{fig/bcs.png}}
 	\caption{Os Sistemas de Coordenadas em um espaço cartesiano}
@@ -111,19 +111,19 @@ A rotação de um ponto no sistema de referência (fixo) com os ângulos de Eule
 		0 & 0 & 1
 	\end{bmatrix}
 	\label{eq:matrotation}
-\end{equation}	
-	
+\end{equation}
+
 \subsubsection{Sistema Horizontal}
 
 Para representar um ponto sobre a casca da esfera do vídeo, uma variação do sistema de coordenadas esféricas, chamado de sistema de coordenadas horizontal é usado como intermediário para operações entre projeções. O sistema de coordenadas horizontal, muito usado na astronomia para observação de corpos celestes, utiliza ângulos de azimute e de altitude para representar a posição de ponto na esfera em relação a um ponto de referência.
 
-Como mostra a figura~\ref{fig:hcs}, neste sistema, o azimute é o angulo da projeção do vetor $ \overrightarrow{v}$ no plano ZX (horizonte) em relação ao eixo Z e a altitude é a elevação vertical do vetor em relação ao plano do horizonte. Por convenção, a elevação varia de -90° a 90°, sendo que o sinal positivo aponta para acima do horizonte, enquanto que o azimute varia de -180° a 180°, sendo que o sinal positivo está à direita do eixo Z. Desta forma, o pixel na posição (elevação, azimute) igual a (0,0) encontra-se no ponto (x=0, y=0, z=1). 
+Como mostra a figura~\ref{fig:hcs}, neste sistema, o azimute é o angulo da projeção do vetor $ \overrightarrow{v}$ no plano ZX (horizonte) em relação ao eixo Z e a altitude é a elevação vertical do vetor em relação ao plano do horizonte. Por convenção, a elevação varia de -90° a 90°, sendo que o sinal positivo aponta para acima do horizonte, enquanto que o azimute varia de -180° a 180°, sendo que o sinal positivo está à direita do eixo Z. Desta forma, o pixel na posição (elevação, azimute) igual a (0,0) encontra-se no ponto (x=0, y=0, z=1).
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.30\linewidth]{fig/hcs.png}
 	\caption{O Sistema de Coordenadas Horizontal}
-	\label{fig:hcs}	 
+	\label{fig:hcs}
 \end{figure}
 
 As equações para conversão das coordenadas cartesianas em coordenadas horizontais não dependem da projeção e podem ser descritas pelo conjunto de equações~\ref{eq:cart2hcs}.
@@ -133,8 +133,8 @@ As equações para conversão das coordenadas cartesianas em coordenadas horizon
 \begin{split}
 	\text{Azimute} &=\sin^{-1}\left(\frac{-y}{\sqrt{x^2+y^2+z^2}}\right) \\
 	\text{Elevação} &=\tan^{-1}\left(\frac{x}{z}\right)
-\end{split}		
-\end{equation}	
+\end{split}
+\end{equation}
 
 
 \section{Projeção}
@@ -175,8 +175,8 @@ A projeção \textit{cubemap} (dp inglês CMP - CubeMap Projection) é outra té
 \end{figure}
 
 Da mesma forma que fizemos com a projeção equirretangular, cada face é mapeada em um plano $uv$, onde as coordenadas $u$ e $v$ variam de -1 a +1, com $u$ apontando para direita e $v$ apontando para baixo. Como a esfera possui raio 1, podemos mapear cada face do cubo calculando a tangente, conforme tabela~\ref{tab:xyz2vu}, enquanto a identificação das faces pode ser determinada observando a direção do eixo que o ponto se encontra.
-Por outro lado, o processo inverso, do plano $uv$ para o espaço cartesiano, pode ser calculado através do mapeamento direto das coordenadas e posicionando o centro de cada face tangente a esfera e perpendicular ao eixo correspondente. Isto é, a face 0 fica no ponto x=-1, a face 2 no ponto z=1, etc. conforme 
-mostra a tabela~\ref{tab:vu2xyz}. Por fim, as coordenadas $uv$ são convertidas para posições dos pixels dado pela equação $ (uv+1)\times \frac{A}{2}-0.5$, onde A é o número de pixels em uma face do quadrado. 
+Por outro lado, o processo inverso, do plano $uv$ para o espaço cartesiano, pode ser calculado através do mapeamento direto das coordenadas e posicionando o centro de cada face tangente a esfera e perpendicular ao eixo correspondente. Isto é, a face 0 fica no ponto x=-1, a face 2 no ponto z=1, etc. conforme
+mostra a tabela~\ref{tab:vu2xyz}. Por fim, as coordenadas $uv$ são convertidas para posições dos pixels dado pela equação $ (uv+1)\times \frac{A}{2}-0.5$, onde A é o número de pixels em uma face do quadrado.
 
 \begin{table}[htb]
 	\centering
@@ -256,7 +256,7 @@ Após o movimento de cabeça, as normais são rotacionadas de acordo com as coor
 
 Após a projeção da esfera, o plano é segmentada espacialmente em vídeos independentes. Cada vídeo é chamado de ladrilho e possuem o mesmo tamanho. Não é possível segmentar o vídeo em qualquer numero de ladrilhos, pois os codificadores possuem limite para o tamanho do quadro que será codificada. O codificador H.265, por exemplo, suporta vídeos com quadros de luminância com no mínimo $176\times144$ pixels~\cite{Sullivan2012a}.
 
-A tabela~\ref{tab:ladrilhamento_resolucoes} mostra o conjunto de padrões de ladrilhamento usados. Quanto maior a quantidade de ladrilhos, menor será o número de pixel por ladrilhos e menos pixels serão processados por viewport. Porém, será necessário que o cliente faça muitas solicitações para conseguir extrair o viewport. Além disso, para que os ladrilhos sejam decodificados em paralelo, será necessário vários instâncias do decodificador. Idealmente será necessário uma instância do decodificador para cada ladrilho. Isto pode exigir muitos recursos do dispositivo, pois um ladrilhamento no padrão 12x8 necessitará de 96 processos de decodificação. No melhor caso, o tempo gasto para a decodificação dos ladrilhos que compõe o viewport é igual ao maior tempo de decodificação. No pior caso, quando há apenas um decodificador, o tempo necessário para decodificar os ladrilhos do viewport será igual a soma do tempo de decodificação de todos ladrilhos visíveis. É possível utilizar uma abordagem intermediária com um sistema de filas com apenas alguns decodificadores onde ladrilhos são enfileirados em uma fila FIFO e são atendidos assim que um decodificador termina seu processamento, porém, quanto maior a duração do ladrilho, mais tempo levará para decodifica-lo. 
+A tabela~\ref{tab:ladrilhamento_resolucoes} mostra o conjunto de padrões de ladrilhamento usados. Quanto maior a quantidade de ladrilhos, menor será o número de pixel por ladrilhos e menos pixels serão processados por viewport. Porém, será necessário que o cliente faça muitas solicitações para conseguir extrair o viewport. Além disso, para que os ladrilhos sejam decodificados em paralelo, será necessário vários instâncias do decodificador. Idealmente será necessário uma instância do decodificador para cada ladrilho. Isto pode exigir muitos recursos do dispositivo, pois um ladrilhamento no padrão 12x8 necessitará de 96 processos de decodificação. No melhor caso, o tempo gasto para a decodificação dos ladrilhos que compõe o viewport é igual ao maior tempo de decodificação. No pior caso, quando há apenas um decodificador, o tempo necessário para decodificar os ladrilhos do viewport será igual a soma do tempo de decodificação de todos ladrilhos visíveis. É possível utilizar uma abordagem intermediária com um sistema de filas com apenas alguns decodificadores onde ladrilhos são enfileirados em uma fila FIFO e são atendidos assim que um decodificador termina seu processamento, porém, quanto maior a duração do ladrilho, mais tempo levará para decodifica-lo.
 
 \begin{table}[h]
 	\centering
@@ -265,15 +265,15 @@ A tabela~\ref{tab:ladrilhamento_resolucoes} mostra o conjunto de padrões de lad
 	\begin{tabular}{|c|p{2.5cm}|c|p{2.5cm}|c}
 		\cline{1-4}
 		\textbf{Ladrilhamento} & \centering\textbf{Quantidade de ladrilhos} & \textbf{Projeção} & \centering \textbf{Pixels por ladrilho} & \\ \cline{1-4}
-		\multirow{2}{*}{\textbf{1x1}} & \centering\multirow{2}{*}{1} & CMP & \centering 4320x2160 & \\ \cline{3-4} 
+		\multirow{2}{*}{\textbf{1x1}} & \centering\multirow{2}{*}{1} & CMP & \centering 4320x2160 & \\ \cline{3-4}
 		&   & ERP & \centering 3240x2160 & \\ \cline{1-4}
-		\multirow{2}{*}{\textbf{3x2}} & \centering \multirow{2}{*}{6} & CMP & \centering 1440x1080 & \\ \cline{3-4} 
+		\multirow{2}{*}{\textbf{3x2}} & \centering \multirow{2}{*}{6} & CMP & \centering 1440x1080 & \\ \cline{3-4}
 		&   & ERP & \centering 1080x1080 & \\ \cline{1-4}
-		\multirow{2}{*}{\textbf{6x4}} & \centering \multirow{2}{*}{24} & CMP & \centering 720x540 & \\ \cline{3-4} 
+		\multirow{2}{*}{\textbf{6x4}} & \centering \multirow{2}{*}{24} & CMP & \centering 720x540 & \\ \cline{3-4}
 		&   & ERP & \centering 540x540 & \\ \cline{1-4}
-		\multirow{2}{*}{\textbf{9x6}} & \centering \multirow{2}{*}{54} & CMP & \centering 480x360 & \\ \cline{3-4} 
+		\multirow{2}{*}{\textbf{9x6}} & \centering \multirow{2}{*}{54} & CMP & \centering 480x360 & \\ \cline{3-4}
 		&   & ERP & \centering 360x360  & \\ \cline{1-4}
-		\multirow{2}{*}{\textbf{ 12x8}} & \centering \multirow{2}{*}{96} & CMP & \centering 360x270 & \\ \cline{3-4} 
+		\multirow{2}{*}{\textbf{ 12x8}} & \centering \multirow{2}{*}{96} & CMP & \centering 360x270 & \\ \cline{3-4}
 		&    & ERP & \centering 270x270 & \\ \cline{1-4}
 	\end{tabular}
 \end{table}
@@ -282,7 +282,7 @@ A tabela~\ref{tab:ladrilhamento_resolucoes} mostra o conjunto de padrões de lad
 
 Protocolos como DASH geralmente não dependem do codificador, mas o cliente deve possuir suporte para a decodificação do streaming. Atualmente, a maioria dos dispositivos móveis possuem suporte a decodificação em GPU dos padrões mais comuns, como H.264, H.265, VP9, AV1, etc\footnote{https://developer.qualcomm.com/hardware/snapdragon-8-gen-2-hdk}. Caso o codec não seja suportado, a decodificação pode ser feita via CPU através de plugins, o que é muito mais lento.
 
-De forma simplificada a figura~\ref{fig:coding} apresenta o diagrama de um codificador de vídeo com perdas. O vídeo de entrada é segmentado em blocos e passa por uma transformação linear que se aproveita da alta autocorrelação dos pixels para concentrar a informação em poucos parâmetros facilitando a quantização. A transformação deve gerar muitos valores pequenos que serão arredondados para zero durante a quantização. Esta perda gera uma pequena dirstorção na image quando for decodificada, que, dependendo da quantização pode não ser perceptível. Após a quantização, uma grande quantidade de elementos possuirá valor zero, gerando grande compressão através de um codificador entrópico, como codificador de huffman ou codificador aritmético. 
+De forma simplificada a figura~\ref{fig:coding} apresenta o diagrama de um codificador de vídeo com perdas. O vídeo de entrada é segmentado em blocos e passa por uma transformação linear que se aproveita da alta autocorrelação dos pixels para concentrar a informação em poucos parâmetros facilitando a quantização. A transformação deve gerar muitos valores pequenos que serão arredondados para zero durante a quantização. Esta perda gera uma pequena dirstorção na image quando for decodificada, que, dependendo da quantização pode não ser perceptível. Após a quantização, uma grande quantidade de elementos possuirá valor zero, gerando grande compressão através de um codificador entrópico, como codificador de huffman ou codificador aritmético.
 
 A maioria dos codificadores modernos permite o controle da quantização de forma automática ou manual. É possível ajustar as configurações de forma que a quantização seja constante ao longo de todo o vídeo ou podemos deixar o codificador ajustar a quantização de acordo com sua configuração. Por exemplo, afim de reduzir a variação da taxa de bits do vídeo, o codificador poderá selecionar uma quantização mais agressiva quando o conteúdo for mais difícil de codificar ou reduzir a quantização quando o conteúdo for menos complexo. Isto é feito realizando a transformação inversa dos elementos quantizados e comparando com o vídeo original. Outro parâmetro muito comum na codificação é o CRF (Constant Rate Factor) que tenta manter a qualidade percebida constante enquanto varia a quantização. É de conhecimento comum através de curvas de isopreferência que imagens de alta complexidade espacial necessitam de menos bits para ser representada, enquanto imagens de baixa complexidade precisam de mais bits pois artefatos de codificação com falsas bordas e blocados podem ser mais facilmente percebidos. Assim o codificador poderá aumentar a quantização quando o vídeo se tornar mais complexo, afim de reduzir a taxa de bits ao custo de uma perda imperceptível de qualidade.
 
@@ -293,17 +293,17 @@ A maioria dos codificadores modernos permite o controle da quantização de form
 	\label{fig:coding}
 \end{figure}
 
-Afim de aumentar a compressão o codificador faz predição de blocos vizinhos em um mesmo quadro em um processo chamado de intra predição, codificando apenas a diferença entre eles e aumentando a compressão. Como em um quadros, blocos vizinhos podem ser muito parecidos, o codificador pode escolher um bloco como referência e codificar apenas a diferença dos seus vizinhos. 
+Afim de aumentar a compressão o codificador faz predição de blocos vizinhos em um mesmo quadro em um processo chamado de intra predição, codificando apenas a diferença entre eles e aumentando a compressão. Como em um quadros, blocos vizinhos podem ser muito parecidos, o codificador pode escolher um bloco como referência e codificar apenas a diferença dos seus vizinhos.
 
-Outra forma aumentar a compressão é através da predição do movimento dos pixels entre quadros, buscando nos quadros futuros (quadros preditivos) e/ou passados (quadros bi-preditivos) para onde aquele grupo de pixels se moveu, reduzindo ainda mais a taxa de bits do vídeo. Apesar da alta eficiência da compressão que estas técnicas de predição fornecem, a ordem dos quadros na saída do decodificador acaba não sendo igual a ordem dos quadros na entrada. Isto implica que a decodificação de algum quadro do vídeo pode dependender da decodificação de quadros futuros. 
+Outra forma aumentar a compressão é através da predição do movimento dos pixels entre quadros, buscando nos quadros futuros (quadros preditivos) e/ou passados (quadros bi-preditivos) para onde aquele grupo de pixels se moveu, reduzindo ainda mais a taxa de bits do vídeo. Apesar da alta eficiência da compressão que estas técnicas de predição fornecem, a ordem dos quadros na saída do decodificador acaba não sendo igual a ordem dos quadros na entrada. Isto implica que a decodificação de algum quadro do vídeo pode dependender da decodificação de quadros futuros.
 
-Estes quadros codificados usando predição entre quadros são agrupados em uma estrutura chamada de Grupo de Figuras (do inglês GOP - Group of Pictures). O GOP geralmente começa com um quadro chave, chamado de quadro I de Intra, que pode ser decodificado sem dependência temporal e é usado como referência para a codificaçao e decodificação dos quadros seguintes. Os quadros que usam apenas informação do passado são chamados de quadros P de preditivo e os quados que usam informação do passado e do futuro são chamados de quadros B, de bi-preditivos. 
+Estes quadros codificados usando predição entre quadros são agrupados em uma estrutura chamada de Grupo de Figuras (do inglês GOP - Group of Pictures). O GOP geralmente começa com um quadro chave, chamado de quadro I de Intra, que pode ser decodificado sem dependência temporal e é usado como referência para a codificaçao e decodificação dos quadros seguintes. Os quadros que usam apenas informação do passado são chamados de quadros P de preditivo e os quados que usam informação do passado e do futuro são chamados de quadros B, de bi-preditivos.
 
 Quanto maior o GOP, menos quadros I serão codificados, aumentandoa compressão. Porém, durante a reprodução, a reprodução de um instante arbitrário do vídeo exigirá a decodificação de vários outros quadros. Desta forma, algumas aplicações limitam o GOP para apenas alguns segundos de vídeo. Para aplicações de streaming é necessário que o GOP seja pequeno a ponto que o cliente possa avançar e retroceder no vídeo de forma rápida, pois ao avançar no vídeo, o cliente deve solicitar no servidor o trecho do vídeo que será decodificado e só então reproduzido. Em aplicações que usam o DASH, a qualidade só poderá ser trocada após a completa reprodução de um GOP.
 
 Nos sistemas tradicionais de streaming, a qualidade está fortemente correlacionada à taxa de bits. Assim, quanto menor a distorção causada pela codificação, melhor a qualidade e maior a taxa de bits. Porém, a taxa de bits também é influenciada pelo conteúdo do vídeo. Vídeos com alta complexidade espacial, ou seja, onde os quadros possuem muitos componentes de alta frequência, com texturas complexas e bruscas variações de luminosidade produzem poucos zeros. Por outro lado, vídeos com alta complexidade temporal, onde a correlação dos pixels entre quadros é menor, também produzirá uma taxa de bits maior. Desta forma é possível que um vídeo complexo com alta taxa de bits tenha qualidade menor do que um vídeo mais simples.
 
-Em um sistema de streaming adaptativo como DASH, o vídeo deve ser dividido em segmentos com intervalo de tempo constante chamados chunks, de forma que o cliente possa requisitar e concatenar os segmentos durante a reprodução. Porém, caso a largura de banda do usuário varie muito durante a reprodução, o vídeo poderá parar enquanto aguarda a chegada de novos chunks. Se o vídeo for disponibilizado em diferentes qualidade, o cliente poderá escolher a qualidade será melhor reproduzida pelo seu dispositivo naquele instante. Assim o cliente pode solicitar um vídeo com uma boa qualidade no começo, mas caso sua internet reduza a largura de banda disponível, uma qualidade inferior pode ser solicitada e reproduzida a tempo, sem que o vídeo seja interrompido. 
+Em um sistema de streaming adaptativo como DASH, o vídeo deve ser dividido em segmentos com intervalo de tempo constante chamados chunks, de forma que o cliente possa requisitar e concatenar os segmentos durante a reprodução. Porém, caso a largura de banda do usuário varie muito durante a reprodução, o vídeo poderá parar enquanto aguarda a chegada de novos chunks. Se o vídeo for disponibilizado em diferentes qualidade, o cliente poderá escolher a qualidade será melhor reproduzida pelo seu dispositivo naquele instante. Assim o cliente pode solicitar um vídeo com uma boa qualidade no começo, mas caso sua internet reduza a largura de banda disponível, uma qualidade inferior pode ser solicitada e reproduzida a tempo, sem que o vídeo seja interrompido.
 
 Para que o DASH possa mudar a qualidade durante a reprodução, os chunks do vídeo devem ser codificado de forma que depois possam ser decodificado independentemente, isto é, não tenham dependência temporal e no caso do vídeo com ladrilhos, nem tenham dependência espacial. Para eliminar a dependência temporal entre os chunks o vídeo deve ser codificado de forma que o GOP caiba inteiramente dentro do chunk. Assim um chunk poderá ter vários GOPs, por exemplo, chunks de 5 segundos a 30 fps poderão ter 5 GOPs com 30 quadros cada. Porém, a codificação será mais eficiente quanto maior for o GOP, ou seja, com o GOP do tamanho do chunk. Durante a criação dos chunks, o protocolo DASH prevê que um arquivo de inicialização será criado com todas as informações necessárias para a decodificação e paralelamente os arquivos dos chunks conterão apenas as NALs Units relativas aos pixels codificados. Este processo é bem definido e pode ser automatizado por ferramentas como GPAC\footnote{https://gpac.io/}.
 
@@ -311,10 +311,19 @@ A dependência espacial entre os ladrilhos pode ser trivialmente eliminada ao cr
 
 Alguns codificadores modernos como o H.265 permite que o vídeo seja segmentado em ladrilhos internamente, restringindo o preditor intra quadros e inter quadros para dentro do ladrilho~\cite{ITU-T2018}. Como os ladrilhos não possuirá dependência temporal ou espacial entre sí, esta técnica permite a decodificação em paralelo de todos os ladrilhos com uma única instância do decodificador, utilizando algumas informações de cabeçalho compartilhadas entre todos os ladrilhos para reduzir o overhead. Os trabalhos apresentados em~\cite{Concolato2017, LeFeuvre2016} descrevem um sistema que se aproveita desta capacidade para segmentar a projeção em ladrilhos e utilizar o protocolo DASH SRD para a descrição da relação espacial entre os mesmos. Este recurso permite o desmembramento do arquivo de vídeo em pacotes de unidade de codificação (do inglês CU - Coding Unit) chamados de NAL Units (Network Abstraction Layer) que podem ser recuperados com overhead mínimo. Até o momento esta técnica foi implementada apenas no tocador do software GPAC, porém as modificações no decodificador para o uso deste recurso junto com o DASH SRD não fazem parte do padrão H.265 nem do DASH. Até o final do ano de 2023 este recurso apenas funcionava em computadores desktop e o uso em sistemas Android (o sistema operacional mais comum dos HMD) apresentava dificuldade de funcionamento nos dispositivos Android testados. Por isso a maioria dos trabalhos analisados que adotaram a abordagem do streaming de ladrilhos adaptado ao viewport realiza o ladrilhamento antes da codificação sob o curso de um overhead maior, pois cada ladrilho possuirá seu próprio cabeçalho do decodificador e do arquivo MP4.
 
-Após a segmentação do vídeo é necessário criar um arquivo de manifesto chamado de Descrição de Apresentação de Mídia (do inglês MPD - Media Presentation Description) contendo diversas informações sobre os chunks e os ladrilhos. O MPD é um arquivo XML que possui a descrição de todas as representações (qualidades) disponíveis para aquele vídeo. O MPD contem o caminho para todos os chunks do vídeo e para todas as qualidades disponíveis. Junto com a descrição dos chunks o MPD também possui outras informações, como resolução do vídeo, taxa de bits, duração, taxa de quadros por segundo, etc. Adicionalmente, em 2015 a MPEG adicionou um novo recurso ao padrão MPEG DASH chamado SRD (do inglês - Spatial Relationship Description) que descreve a relação espacial entre ladrilhos de um vídeo. Isto permite que o cliente requisite somente os ladrilhos que são relevantes para a experiência do usuário. Inicialmente o DASH SRD foi desenvolvido para a transmissão de vídeos em UHD que podem ser aproximados e navegados, ou segmentados e reproduzido em múltiplos monitores, mas pode ser facilmente estendido para vídeos esféricos segmentados em ladrilhos. O SRD oferece grande flexibilidade ao permitir diferentes representações espaciais com resoluções, taxas de quadros e codecs variados em um mesmo vídeo. Essas representações podem se sobrepor parcial ou totalmente e ter tamanhos arbitrariamente diferentes. Para isto, o SRD descreve essas relações espaciais entre os objetos em termos de posição e tamanho e permite ao cliente novas escolhas em termos de adaptação. Um cliente DASH consciente do SRD pode usar as anotações SRD para selecionar uma representação em tela cheia ou em apenas uma parte espacial do vídeo que melhor se adapte aos seus recursos. Isso pode economizar largura de banda e computações do lado do cliente, evitando, por exemplo, o carregamento, decodificação e recorte de regiões do vídeo que não são interessantes. Alternativamente isto pode aumentar a qualidade percebida se os recursos computacionais disponíveis forem direcionados ao processamento de melhor qualidade das regiões de interesse do vídeo~\cite{Niamut2016}.
+Após a segmentação do vídeo é necessário criar um arquivo de manifesto chamado de Descrição de Apresentação de Mídia (do inglês MPD - Media Presentation Description) contendo diversas informações sobre os chunks e os ladrilhos. O MPD é um arquivo XML que possui a descrição de todas as representações disponíveis para aquele vídeo. As representações são uma coleção de informações sobre os vídeos disponíveis, como resolução, taxa de bits, taxa de quadros, codificador, URL, etc. A figura~\ref{fig:dash-server} mostra um diagrama geral do DASH. O DASH permite ao servidor disponibilizar vários formatos do mesmo vídeo para que o cliente escolha o que melhor se adapte a suas necessidades, permitindo realizar a troca da representação durante a reprodução sem a interrupção do vídeo, reproduzindo um chunk atrás do outro, mesmo que os chunks tenham propriedades diferentes. O MPD contem o caminho para todos os chunks do vídeo e para todas as qualidades disponíveis e junto com a descrição dos chunks o MPD compartilha outras informações, como resolução do vídeo, taxa de bits, duração do vídeo, taxa de quadros por segundo, etc. e mais recentemente o DASH permite o compartilhamento de informações sobre o ladrilhamento.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\linewidth]{fig/dash-server}
+    \caption{}
+    \label{fig:dash-server}
+\end{figure}
+
+O suporte ao ladrilhamento de vídeos pelo DASH é relativamente recente. A MPEG adicionou este recurso chamado SRD (do inglês - Spatial Relationship Description) que descreve a relação espacial entre ladrilhos de um vídeo. Isto permite que o cliente requisite somente os ladrilhos que são relevantes para a experiência do usuário. Inicialmente o DASH SRD foi desenvolvido para a transmissão de vídeos em UHD que podem ser aproximados e navegados, ou segmentados e reproduzido em múltiplos monitores, mas pode ser facilmente estendido para vídeos esféricos segmentados em ladrilhos~\cite{Niamut2016}. O SRD oferece grande flexibilidade ao permitir diferentes representações espaciais dos ladrilhos com resoluções, taxas de quadros e codecs variados em um mesmo vídeo. Essas representações podem se sobrepor parcial ou totalmente e ter tamanhos arbitrariamente diferentes. Para isto, o SRD descreve essas relações espaciais entre os objetos em termos de posição e tamanho e permite ao cliente novas escolhas em termos de adaptação. Um cliente DASH consciente do SRD pode usar as anotações SRD para selecionar uma representação em tela cheia ou em apenas uma parte espacial do vídeo que melhor se adapte aos seus recursos. Isso pode economizar largura de banda e computações do lado do cliente, evitando, por exemplo, o carregamento, decodificação e recorte de regiões do vídeo que não são interessantes. Alternativamente isto pode aumentar a qualidade percebida se os recursos computacionais disponíveis forem direcionados ao processamento de melhor qualidade das regiões de interesse do vídeo.
 
 \section{O lado do cliente}
+
 
 
 
@@ -395,7 +404,7 @@ O S-PSNR emprega uma lista de 655.362 pontos equidistantes na esfera para identi
                 \quad\quad
                 \includegraphics[width=0.25\linewidth]{fig/ws-psnr.png}
                 \quad\quad
-        }     
+        }
 \end{figure}
 
 \subsubsection{WS-MSE/WS-PSNR}
@@ -435,7 +444,7 @@ Para otimizar o streaming de vídeo esférico é essencial conhecer suas princip
 
 \section{Caracterização dos elementos do servidor}
 
-O fluxo de trabalho da caracterização é visto na figura~\ref{fig:fluxograma1}. Os vídeos selecionados São os mesmos empregados no estudo de Nasrabadi~\cite{Nasrabadi2019}. Seis vídeos foram gravados pessoalmente pelo autor em projeção equirretangular. Os demais vídeos foram obtidos do YouTube em projeção cúbica. O processo de download foi executado usando a ferramenta JDownloader\footnote{https://jdownloader.org/} e, devido a variabilidade de qualidades e formatos abrangendo da plataforma, demos preferência a vídeos codificados com h.264, resolução de 4K e 30 fps (quadros por segundo). Apesar disto, os vídeos estavam em duas projeções diferentes e possuíam grande variabilidade de resoluções e taxas de quadro. Isto nos levou a padronizá-los afim de podermos comparar suas características. 
+O fluxo de trabalho da caracterização é visto na figura~\ref{fig:fluxograma1}. Os vídeos selecionados São os mesmos empregados no estudo de Nasrabadi~\cite{Nasrabadi2019}. Seis vídeos foram gravados pessoalmente pelo autor em projeção equirretangular. Os demais vídeos foram obtidos do YouTube em projeção cúbica. O processo de download foi executado usando a ferramenta JDownloader\footnote{https://jdownloader.org/} e, devido a variabilidade de qualidades e formatos abrangendo da plataforma, demos preferência a vídeos codificados com h.264, resolução de 4K e 30 fps (quadros por segundo). Apesar disto, os vídeos estavam em duas projeções diferentes e possuíam grande variabilidade de resoluções e taxas de quadro. Isto nos levou a padronizá-los afim de podermos comparar suas características.
 
 \begin{figure}[h]
         \centering
@@ -450,95 +459,95 @@ A Tabela~\ref{tab:list_videos} exibe a lista dos cinquenta e seis vídeos utiliz
 
 \begin{longtable}{|c|c|c|c|c|c|c|}
         \caption{Vídeos usados no experimento}
-        \label{tab:list_videos} 
+        \label{tab:list_videos}
         \\
-        
+
         \hline
         Câmera & Objetos & Nome & Projeção & SI & TI  &  \makecell{Taxa de \\ Bits (Mbps)} \\
         \hline
         \endfirsthead
-        
+
         \multicolumn{7}{c}%
         {{\bfseries \tablename\ \thetable{} -- Continuação da página anterior}} \\
         \hline
 %        Grupo & Nome & Projeção & SI & TI  &  \makecell{Taxa de \\ Bits (Mbps)} \\
         Câmera & Objetos & Nome & Projeção & SI & TI  &  \makecell{Taxa de \\ Bits (Mbps)} \\
         \hline
-        
+
         \endhead
-        
+
         \multicolumn{7}{|r|}{{Continua na próxima página}} \\ \hline
         \endfoot
-        
+
         \hline
         \endlastfoot
-        
-        
+
+
         \multirow{12}{*}{Fixo} & \multirow{4}{*}{Nenhum} & \multirow{2}{*}{montana} & ERP &  33.4 &   0.34 &   3.033 \\  \cline{4-7}
                                &                         &                          & CMP &  35.7 &   0.19 &   2.811 \\  \cline{3-7}
                                &                         & \multirow{2}{*}{sunset}  & ERP &  15.6 &   0.44 &   1.571 \\ \cline{4-7}
                                &                         &                          & CMP &  18.7 &   0.46 &   1.442 \\ \cline{2-7}
-        
+
                                & \multirow{4}{*}{Simples}& \multirow{2}{*}{closet\_tour}  & ERP &  51.0 &   1.65 &   2.349 \\ \cline{4-7}
                                &                         &                                & CMP &  57.2 &   1.95 &   2.276 \\ \cline{3-7}
                                &                         & \multirow{2}{*}{video\_04}     & ERP &  49.9 &   1.19 &   2.875 \\ \cline{4-7}
                                &                         &                                & CMP &  50.9 &   1.11 &   2.245 \\ \cline{2-7}
-        
+
                                & \multirow{4}{*}{Multi} & \multirow{2}{*}{dubstep\_dance}   & ERP &  32.9 &   6.14 &   2.771 \\ \cline{4-7}
                                &                        &                                   & CMP &  38.0 &   6.28 &   2.516 \\ \cline{3-7}
                                &                        & \multirow{2}{*}{rhinos}           & ERP &  38.5 &   0.71 &   3.799 \\ \cline{4-7}
                                &                        &                                   & CMP &  39.8 &   0.63 &   3.251 \\ \hline
-                                 
+
         \multirow{12}{*}{Horizontal} & \multirow{4}{*}{Nenhum} & \multirow{2}{*}{drone\_footage}   & ERP &  30.3 &   5.49 &   5.153 \\ \cline{4-7}
                                      &                         &                                   & CMP &  37.2 &   5.80 &   4.334 \\ \cline{3-7}
                                      &                         & \multirow{2}{*}{petite\_anse}     & ERP &  41.4 &   7.84 &   5.913 \\ \cline{4-7}
                                      &                         &                                   & CMP &  39.4 &   7.50 &   4.919 \\ \cline{2-7}
-                                 
+
                                & \multirow{4}{*}{Simples} & \multirow{2}{*}{cable\_cam}        & ERP &  49.7 &  17.54 &  18.790 \\ \cline{4-7}
                                &                      &                                    & CMP &  53.1 &  18.47 &  17.554 \\ \cline{3-7}
                                &                      & \multirow{2}{*}{motorsports\_park} & ERP &  35.6 &   8.15 &   3.545 \\ \cline{4-7}
                                &                      &                                    & CMP &  41.7 &   8.88 &   3.413 \\ \cline{2-7}
-                                 
+
                                &  \multirow{4}{*}{Multi} & \multirow{2}{*}{chariot\_race}    & ERP &  39.1 &  16.87 &   8.034 \\ \cline{4-7}
                                &                       &                                   & CMP &  44.8 &  18.99 &   7.519 \\ \cline{3-7}
                                &                       & \multirow{2}{*}{nyc\_drive}       & ERP &  82.7 &  24.59 &  12.176 \\ \cline{4-7}
                                &                        &                                  & CMP &  92.7 &  27.72 &  11.565 \\ \hline
-                                 
+
         \multirow{8}{*}{Vertical} &  \multirow{4}{*}{Nenhum} & \multirow{2}{*}{elevator\_lift}   & ERP &  52.9 &   8.46 &   2.325 \\ \cline{4-7}
                                   &                       &                                   & CMP &  60.3 &   9.59 &   2.100 \\ \cline{3-7}
                                   &                       & \multirow{2}{*}{glass\_elevator}  & ERP &  74.6 &   9.08 &   5.432 \\ \cline{4-7}
                                   &                       &                                   & CMP &  82.1 &  11.82 &   5.974 \\ \cline{2-7}
-                                 
+
                                   &  \multirow{4}{*}{Multi} & \multirow{2}{*}{drone\_video}    & ERP &  77.0 &  15.73 &   7.831 \\ \cline{4-7}
                                   &                       &                                  & CMP &  84.5 &  18.58 &   7.431 \\ \cline{3-7}
                                   &                       & \multirow{2}{*}{drop\_tower}     & ERP &  41.0 &   4.95 &   3.141 \\ \cline{4-7}
                                   &                       &                                  & CMP &  45.0 &   4.27 &   2.839 \\ \hline
-                                 
+
         \multirow{12}{*}{Rotação} &  \multirow{4}{*}{Nenhum} & \multirow{2}{*}{video\_19}       & ERP &  44.7 &   7.80 &   1.310 \\ \cline{4-7}
                                  &                       &                                  & CMP &  48.8 &   9.01 &   1.645 \\ \cline{3-7}
                                  &                       & \multirow{2}{*}{video\_20}       & ERP &  31.8 &   5.36 &   0.787 \\ \cline{4-7}
                                  &                       &                                  & CMP &  36.8 &   6.03 &   0.925 \\ \cline{2-7}
-                                 
+
                                & \multirow{4}{*}{Simples} & \multirow{2}{*}{penthouse}       & ERP &  42.2 &   1.56 &   1.421 \\ \cline{4-7}
                                &                     &                                  & CMP &  48.3 &   1.61 &   1.458 \\ \cline{3-7}
                                &                      & \multirow{2}{*}{video\_22}       & ERP &  34.7 &   5.59 &   1.055 \\ \cline{4-7}
                                &                      &                                  & CMP &  40.6 &   6.56 &   1.166 \\ \cline{2-7}
-                                 
+
                                &  \multirow{4}{*}{Multi} & \multirow{2}{*}{video\_23}    & ERP &  45.6 &  10.95 &   3.398 \\ \cline{4-7}
                                &                      &                               & CMP &  49.7 &  12.28 &   3.231 \\ \cline{3-7}
                                &                      & \multirow{2}{*}{video\_24}    & ERP &  41.8 &   9.43 &   1.802 \\ \cline{4-7}
                                 &                     &                               & CMP &  48.7 &  11.11 &   2.097 \\ \hline
-                                 
+
         \multirow{12}{*}{Misto} &   \multirow{4}{*}{Nenhum} & \multirow{2}{*}{angel\_falls} & ERP &  24.3 &   1.89 &   2.690 \\ \cline{4-7}
                                 &                     &                               & CMP &  24.2 &   1.95 &   2.233 \\\cline{3-7}
                                 &                     & \multirow{2}{*}{three\_peaks} & ERP &  25.9 &   3.30 &   1.693 \\ \cline{4-7}
                                 &                     &                               & CMP &  30.4 &   3.06 &   1.473 \\ \cline{2-7}
-                                 
+
                                 & \multirow{4}{*}{Simples} & \multirow{2}{*}{drone\_chases\_car} & ERP &  28.9 &  12.10 &   5.839 \\ \cline{4-7}
                                 &                     &                                     & CMP &  29.6 &  13.12 &   5.251 \\ \cline{3-7}
                                 &                     & \multirow{2}{*}{wingsuit\_dubai}    & ERP &  68.8 &  18.98 &  10.012 \\ \cline{4-7}
                                 &                     &                                     & CMP &  66.8 &  16.86 &   7.881 \\ \cline{2-7}
-                                 
+
                                 & \multirow{4}{*}{Multi} & \multirow{2}{*}{blue\_angels} & ERP &  41.2 &   6.65 &   3.766 \\ \cline{4-7}
                                 &                     &                               & CMP &  42.7 &   6.94 &   3.520 \\ \cline{3-7}
                                 &                     & \multirow{2}{*}{pac\_man}     & ERP &  23.2 &   6.36 &   1.262 \\ \cline{4-7}
@@ -548,14 +557,14 @@ A Tabela~\ref{tab:list_videos} exibe a lista dos cinquenta e seis vídeos utiliz
 
 As colunas "SI" e "TI" mostram informações espaciais (SI) e temporais (TI), calculadas seguindo a recomendação ITU-T P.910, porém, utilizando a mediana em vez do valor máximo, pois os vídeos são longos e possuem picos que não caracterizam o vídeo em si. Os índices de correlação de Pearson entre SI e taxa de bits, assim como entre TI e taxa de bits, são respectivamente de 0.519 e 0.759 para projeção cúbica e 0,528 e 0,773 para projeção equirretangular, indicando uma influência razoável tanto de SI quanto de TI na taxa de bits, com ênfase à atividade temporal.
 
-Examinando o gráfico de dispersão de SI e TI na Figura~\ref{fig:scatter_si_ti}, observamos um padrão bem distribuído entre os vídeos: a taxa de bits média é de 4,22 Mbps, o SI médio é de 46,3 e o TI médio é de 8,5.  Os índices de correlação de Pearson entre SI e taxa de bits, bem como entre TI e taxa de bits, são de 0.530 e 0.765, respectivamente, significando uma influência razoável tanto de SI quanto de TI na taxa de bits. 
+Examinando o gráfico de dispersão de SI e TI na Figura~\ref{fig:scatter_si_ti}, observamos um padrão bem distribuído entre os vídeos: a taxa de bits média é de 4,22 Mbps, o SI médio é de 46,3 e o TI médio é de 8,5.  Os índices de correlação de Pearson entre SI e taxa de bits, bem como entre TI e taxa de bits, são de 0.530 e 0.765, respectivamente, significando uma influência razoável tanto de SI quanto de TI na taxa de bits.
 
 \begin{figure}[h]
         \centering
         \subfigure[Projeção CMP. \label{fig:scatter_CMP}]{
                 \includegraphics[width=0.8\linewidth]{fig/scatter_CMP.png}
         } % end subfigure
-       
+
         \subfigure[Projeção ERP. \label{fig:scatter_ERP}]{
                 \includegraphics[width=0.8\linewidth]{fig/scatter_ERP.png}
         } % end subfigure
@@ -566,7 +575,7 @@ Examinando o gráfico de dispersão de SI e TI na Figura~\ref{fig:scatter_si_ti}
 Para replicar uma condição comparável DASH-SRD, os ladrilho passaram pelo ladrilhamento antes da codificação, garantindo que cada ladrilho fosse espacialmente independente. Para cada vídeo, geramos quatro novas sequências de vídeo, cada uma com padrões de os ladrilhos conforme a tabela~\ref{tab:ladrilhamento_resolucoes}. Quanto maior o numero de ladrilhos, menor o numero de pixel em cada ladrilho, reduzindo o espaço de busca do compensador de movimento do codificador e reduzindo a eficiência da compressão. A projeção cúbica, tendo proporção menor tende a ser uma representação mais compacta, apresentando menor taxa de bits, porém com maior complexidade de compressão. Apesar de quanto menor os ladrilhos, menos pixels não visto são processador, este procedimento produz redução na eficiência do codificador. Além disso, quanto mais ladrilhos forem solicitados, serão necessárias múltiplas instâncias de um decodificador no cliente e mais complexo será o processo, pois para reproduzir um único quadro do ladrilho, todo o chunk precisa ser decodificado.
 
 
-Subsequentemente, utilizamos o codificador HEVC x265 no FFmpeg\footnote{https://ffmpeg.org/} para padronizar e codificar cada ladrilho, empregando seis valores distintos do Fator de Taxa Constante (CRF) para controlar a qualidade/taxa de bits: 16, 22, 28, 34, 40 e 46. O valor de CRF mais baixo (mais alto) de 16 (46) corresponde à maior (menor) qualidade de vídeo. O valor padrão de 28 é recomendado pelo codificador por seu equilíbrio entre qualidade e taxa de compressão. Vale ressaltar que cada incremento de 3 no valor de CRF resulta em uma redução pela metade na taxa de bits; em nosso conjunto, a taxa de bits diminui quatro vezes para os valores de CRF especificados. Os parâmetros de codificação do vídeo estão detalhados na Tabela \ref{tab:parametros_qlt}. O GOP do vídeo foi fixado em 30 quadros, o parâmetro para detecção de cortes de cena foi desativado para que o GOP não varie dentro de um chunk e o parâmetro "--no-info" foi utilizado para omitir cerca de 200 bytes de informações sobre o codificador no cabeçalho mp4 e assim reduzir o overhead dos vídeos. Esta quantidade é relativamente significativa quando se trata de chunks muito pequenos com baixa complexidade de codificação e alta compressão. Além disso os vídeos foram processados com os parâmetros "-tune psnr" para comparação mais precisa das métricas de distorção, como MSE e PSNR. 
+Subsequentemente, utilizamos o codificador HEVC x265 no FFmpeg\footnote{https://ffmpeg.org/} para padronizar e codificar cada ladrilho, empregando seis valores distintos do Fator de Taxa Constante (CRF) para controlar a qualidade/taxa de bits: 16, 22, 28, 34, 40 e 46. O valor de CRF mais baixo (mais alto) de 16 (46) corresponde à maior (menor) qualidade de vídeo. O valor padrão de 28 é recomendado pelo codificador por seu equilíbrio entre qualidade e taxa de compressão. Vale ressaltar que cada incremento de 3 no valor de CRF resulta em uma redução pela metade na taxa de bits; em nosso conjunto, a taxa de bits diminui quatro vezes para os valores de CRF especificados. Os parâmetros de codificação do vídeo estão detalhados na Tabela \ref{tab:parametros_qlt}. O GOP do vídeo foi fixado em 30 quadros, o parâmetro para detecção de cortes de cena foi desativado para que o GOP não varie dentro de um chunk e o parâmetro "--no-info" foi utilizado para omitir cerca de 200 bytes de informações sobre o codificador no cabeçalho mp4 e assim reduzir o overhead dos vídeos. Esta quantidade é relativamente significativa quando se trata de chunks muito pequenos com baixa complexidade de codificação e alta compressão. Além disso os vídeos foram processados com os parâmetros "-tune psnr" para comparação mais precisa das métricas de distorção, como MSE e PSNR.
 
 \begin{table}[htb]
         \centering
@@ -613,7 +622,7 @@ Para a caracterização do que o usuário experimenta, a posição da cabeça do
         \label{fig:tilesSelection}
 \end{figure}
 
-O banco de dados de movimentos da cabeça foi gerado por Nasrabadi \cite{Nasrabadi2019}. Este banco de dados compilou a posição central do viewport na esfera para 60 voluntários (30 voluntários por vídeo), representados em quatérnions e em vetores cartesianos a uma taxa variável. Utilizando marcas de tempo foi feita a interpolação para que todas as amostras estejam à taxa de 30 Hz. A figura \ref{fig:datasetSpeedmap}, extraída do trabalho de Nasrabadi, fornece um mapa da velocidade angular média para todos os usuários em cada vídeo. Como observado pelo autor, a velocidade angular média dos vídeos depende do usuário, o que significa que um usuário com velocidade alta em um vídeo tende a exibir velocidade alta em todos os vídeos. 
+O banco de dados de movimentos da cabeça foi gerado por Nasrabadi \cite{Nasrabadi2019}. Este banco de dados compilou a posição central do viewport na esfera para 60 voluntários (30 voluntários por vídeo), representados em quatérnions e em vetores cartesianos a uma taxa variável. Utilizando marcas de tempo foi feita a interpolação para que todas as amostras estejam à taxa de 30 Hz. A figura \ref{fig:datasetSpeedmap}, extraída do trabalho de Nasrabadi, fornece um mapa da velocidade angular média para todos os usuários em cada vídeo. Como observado pelo autor, a velocidade angular média dos vídeos depende do usuário, o que significa que um usuário com velocidade alta em um vídeo tende a exibir velocidade alta em todos os vídeos.
 
 \begin{figure}[h]
         \centering
@@ -627,35 +636,35 @@ A seguir, considerando os ladrilhos selecionados na etapa anterior, são reconst
 
 \section{Cenários avaliados}
 
-Após a coleta dos dados, o comportamento da qualidade será analisado sob duas perspectivas: uma do ponto de vista de um sistema ABR que considera a correlação da qualidade com a taxa de transmissão do vídeo e outra do ponto de vista do usuário que visualiza o vídeo utilizando óculos de realidade virtual. 
+Após a coleta dos dados, o comportamento da qualidade será analisado sob duas perspectivas: uma do ponto de vista de um sistema ABR que considera a correlação da qualidade com a taxa de transmissão do vídeo e outra do ponto de vista do usuário que visualiza o vídeo utilizando óculos de realidade virtual.
 
 \subsection{Estatísticas dos ladrilhos por ladrilhamento}
 
-A tabela~\ref{tab:stats} fornece os valores de média e desvio padrão para o tempo de decodificação e a taxa de bits dos \textit{chunk} para vários padrões de ladrilho. Conforme previsto, a redução no tamanho do ladrilho (correspondendo a um aumento no ladrilhamento do vídeo) menor a taxa de bits e o tempo de decodificação por ladrilho. O desvio padrão da taxa de bits apresenta um valor superior à média, pois esta média inclui todas as qualidades, o que resulta em uma variação de aproximadamente 20 vezes na taxa de bits. Além disso, a projeção cúbica possui uma taxa de bits média aproximadamente 8\% menor do que a projeção equirretangular. Isto se deve a sua representação ser mais compacta e exigir menos pixels. Esta diferença também se reflete no tempo de decodificação dos ladrilhos que serão decodificados mais rapidamente. 
+A tabela~\ref{tab:stats} fornece os valores de média e desvio padrão para o tempo de decodificação e a taxa de bits dos \textit{chunk} para vários padrões de ladrilho. Conforme previsto, a redução no tamanho do ladrilho (correspondendo a um aumento no ladrilhamento do vídeo) menor a taxa de bits e o tempo de decodificação por ladrilho. O desvio padrão da taxa de bits apresenta um valor superior à média, pois esta média inclui todas as qualidades, o que resulta em uma variação de aproximadamente 20 vezes na taxa de bits. Além disso, a projeção cúbica possui uma taxa de bits média aproximadamente 8\% menor do que a projeção equirretangular. Isto se deve a sua representação ser mais compacta e exigir menos pixels. Esta diferença também se reflete no tempo de decodificação dos ladrilhos que serão decodificados mais rapidamente.
 A tabela também revela que as métricas de qualidade sofrem um sutil aumento com o aumento do ladrilhamento enquanto seu desvio padrão cresce de forma mais agressiva. Esta variação ocorre porque o codificador, configurado com o parâmetro CRF, ajusta a quantização afim de manter a qualidade uniforme\footnote{https://x265.readthedocs.io/en/master/cli.html} e uma vez que o ladrilhamento isola regiões da projeção que possuem atividade espacial e temporal diferente, o codificação aplicará a quantização de forma diferente, aumentando o desvio padrão e deslocando a média. % A métrica S-MSE está errada, parece que eu calculei a média em cima dos pixels da projeção e não dos pixels do ladrilho.
 Já a métrica SSIM não apresenta diferença significativa entre os ladrilhamentos, apesar de seu desvio padrão aumentar com a redução dos ladrilhos. Quando comparamos as métricas de qualidade para as diferentes projeções, vemos que a projeção equirretangular apresenta m
 
 \begin{longtable}{|c|c|c|c|c|c|}
         \caption{Valores de média e desvio padrão das métricas analisadas de acordo com o ladrilhamento, abrangendo todas qualidades.} \label{tab:stats} \\
-        
+
         \hline
         \multirow{2}{*}{\textbf{Métrica}} &  \multirow{2}{*}{\textbf{Ladrilhamento}} & \multicolumn{2}{c|}{\textbf{CMP}} & \multicolumn{2}{c|}{\textbf{ERP}} \\
         \cline{3-6}
         &   & \textbf{Média} & \textbf{Desvio Padrão} & \textbf{Média} & \textbf{Desvio Padrão} \\
         \hline
         \endfirsthead
-        
+
         \multicolumn{6}{c}%
         {{\bfseries \tablename\ \thetable{} -- Continuação da página anterior}} \\
         \hline
         \endhead
-        
+
         \hline \multicolumn{6}{|r|}{{Continua na próxima página}} \\ \hline
         \endfoot
-        
+
         \hline
         \endlastfoot
-        
+
         \multirow{5}{*}{Taxa}  & 1x1  & 6.050.720 & 10.352.018 & 6.591.315 & 11.176.695 \\ \cline{2-6}
         & 3x2  & 1.030.891 & 2.012.731  & 1.130.073 & 2.281.468 \\ \cline{2-6}
         & 6x4  & 277.689   & 589.369    & 301.493   & 661.050  \\  \cline{2-6}
@@ -665,34 +674,34 @@ Já a métrica SSIM não apresenta diferença significativa entre os ladrilhamen
         & 3x2  & 0,098     & 0,053      & 0,122     & 0,062    \\  \cline{2-6}
         & 6x4  & 0,022     & 0,015      & 0,026     & 0,017    \\  \cline{2-6}
         & 9x6  & 0,011     & 0,007      & 0,012     & 0,008    \\  \cline{2-6}
-        & 12x8 & 0,006     & 0,004      & 0,008     & 0,005    \\  \hline 
+        & 12x8 & 0,006     & 0,004      & 0,008     & 0,005    \\  \hline
         % \pagebreak\hline
-        \multirow{5}{*}{MSE}   & 1x1  & 21,472    & 33,788     & 17,782    & 28,024    \\  \cline{2-6}          
+        \multirow{5}{*}{MSE}   & 1x1  & 21,472    & 33,788     & 17,782    & 28,024    \\  \cline{2-6}
         & 3x2  & 21,603    & 39,575     & 18,155    & 34,290   \\  \cline{2-6}
         & 6x4  & 21,923    & 45,121     & 18,409    & 39,623   \\  \cline{2-6}
         & 9x6  & 22,523    & 48,846     & 18,853    & 43,182   \\  \cline{2-6}
-        & 12x8 & 22,613    & 50,499     & 19,034    & 45,037   \\  \hline 
+        & 12x8 & 22,613    & 50,499     & 19,034    & 45,037   \\  \hline
         \multirow{5}{*}{SSIM}  & 1x1  & 0,951     & 0,050      & 0,957     & 0,043     \\  \cline{2-6}
         & 3x2  & 0,951     & 0,060      & 0,957     & 0,055    \\  \cline{2-6}
         & 6x4  & 0,951     & 0,068      & 0,957     & 0,061    \\  \cline{2-6}
         & 9x6  & 0,951     & 0,071      & 0,957     & 0,064    \\  \cline{2-6}
-        & 12x8 & 0,951     & 0,073      & 0,957     & 0,067    \\  \hline 
+        & 12x8 & 0,951     & 0,073      & 0,957     & 0,067    \\  \hline
         \multirow{5}{*}{WS-MSE}& 1x1  & 21,784    & 33,965     & 20,473    & 33,051   \\  \cline{2-6}
         & 3x2  & 21,968    & 40,410     & 20,880    & 39,442   \\  \cline{2-6}
-        & 6x4  & 22,420    & 45,615     & 19,578    & 42,162   \\  \cline{2-6}           
-        & 9x6  & 22,738    & 49,216     & 19,401    & 44,243   \\  \cline{2-6}                
-        & 12x8 & 22,758    & 50,740     & 19,343    & 45,660   \\  \hline 
+        & 6x4  & 22,420    & 45,615     & 19,578    & 42,162   \\  \cline{2-6}
+        & 9x6  & 22,738    & 49,216     & 19,401    & 44,243   \\  \cline{2-6}
+        & 12x8 & 22,758    & 50,740     & 19,343    & 45,660   \\  \hline
         \multirow{5}{*}{S-MSE}  & 1x1  & 21,779    & 34,009     & 20,461    & 33,072   \\  \cline{2-6}
         & 3x2  & 3,661     & 6,749      & 3,477     & 6,572    \\  \cline{2-6}
         & 6x4  & 0,935     & 1,904      & 0,883     & 2,084    \\  \cline{2-6}
         & 9x6  & 0,427     & 0,963      & 0,401     & 1,014    \\  \cline{2-6}
-        & 12x8 & 0,241     & 0,568      & 0,228     & 0,597 
+        & 12x8 & 0,241     & 0,568      & 0,228     & 0,597
 \end{longtable}
 
 A figura~\ref{Fig:boxplottiling} mostra o boxpplot para cada métrica. Cada caixa representa o segundo e o terceiro quartil e a linha interna representa a mediana. Os traços acima e abaixo da caixa representam os valores máximos e mínimos. Apesar do desvio padrão ser alto, a maior parte dos valores estão concentrados em torno da mediana, indicando que, apesar da alta variação nestas métricas, apenas em poucos casos ocorrerão desvios.
 
 \begin{figure}[h]
-         \centering         
+         \centering
 
            \includegraphics[width=0.9\columnwidth]{fig/ByPattern/boxplot_pattern.pdf}
            \caption{Boxplot do tempo de decodificação, taxa de bits e erro organizado por ladrilhamento.}
@@ -788,7 +797,7 @@ Notavelmente, as distribuições Gaussiana Inversa e Birnbaum-Saunders estão co
 No primeiro cenário, para cada chunk haverá um conjunto de ladrilhos que aparecem no viewport. Ao longo da duração do chunk o usuário poderá mover a cabeça e o conjunto de ladrilhos muda. Estes novos ladrilhos precisam já ter sido decodificados completamente para poderem ser exibidos. Desta forma é preciso considerar a trajetória do movimento de cabeça para se requisitar os ladrilhos. Sendo A o conjunto dos ladrilhos que são vistos pelo viewport no quadro f, os ladrilhos vistos $lv$ durante a duração de um chunk será dada pela equação~\ref{eq:tiles_seen}.
 
 \begin{equation}
-        lv=\bigcup^{30}_{f=1} A_f \\    
+        lv=\bigcup^{30}_{f=1} A_f \\
         \label{eq:tiles_seen}
 \end{equation}
 
