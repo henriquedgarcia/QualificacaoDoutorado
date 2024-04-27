@@ -330,6 +330,7 @@ Após a segmentação do vídeo é necessário criar um arquivo de manifesto cha
 
 O suporte ao ladrilhamento de vídeos pelo DASH é relativamente recente. A MPEG adicionou este recurso chamado SRD (do inglês - Spatial Relationship Description) que descreve a relação espacial entre ladrilhos de um vídeo. Isto permite que o cliente requisite somente os ladrilhos que são relevantes para a experiência do usuário. Inicialmente o DASH SRD foi desenvolvido para a transmissão de vídeos em UHD que podem ser aproximados e navegados, ou segmentados e reproduzido em múltiplos monitores, mas pode ser facilmente estendido para vídeos esféricos segmentados em ladrilhos~\cite{Niamut2016}. O SRD oferece grande flexibilidade ao permitir diferentes representações espaciais dos ladrilhos com resoluções, taxas de quadros e codecs variados em um mesmo vídeo. Essas representações podem se sobrepor parcial ou totalmente e ter tamanhos arbitrariamente diferentes. Para isto, o SRD descreve essas relações espaciais entre os objetos em termos de posição e tamanho e permite ao cliente novas escolhas em termos de adaptação. Um cliente DASH consciente do SRD pode usar as anotações SRD para selecionar uma representação em tela cheia ou em apenas uma parte espacial do vídeo que melhor se adapte aos seus recursos. Isso pode economizar largura de banda e computações do lado do cliente, evitando, por exemplo, o carregamento, decodificação e recorte de regiões do vídeo que não são interessantes. Alternativamente isto pode aumentar a qualidade percebida se os recursos computacionais disponíveis forem direcionados ao processamento de melhor qualidade das regiões de interesse do vídeo.
 
+\section{O cliente DASH}
 
 
 \section{Qualidade objetiva do vídeo}
@@ -443,8 +444,6 @@ A correlação entre as métricas é feita entre todos os chunks de cada ladrilh
 \chapter{Avaliação e resultados}\label{Cap:Evaluation}
 
 Para otimizar o streaming de vídeo esférico é essencial conhecer suas principais características que afetam seu desempenho e sua qualidade. Para caracterizar o tráfego de vídeo panorâmico de 360 graus ladrilhado com DASH-SRD, é essencial replicar as condições de transmissão, codificação e segmentação do vídeo durante uma seção do cliente. Além disso, as métricas de avaliação devem ser relacionadas a experiência do usuário e do servidor. Para o cliente o queremos medir o tempo de decodificação, a taxa de bits e a qualidade do vídeo exibido no viewport. Para o servidor, queremos que a melhor qualidade seja entregue com a menor taxa de bits possível e para isso avaliamos métricas de qualidade de codificação tradicional e de vídeo esférico e sua correlação com o a taxa de bits.
-
-
 
 
 \section{Caracterização dos elementos do servidor}
@@ -828,6 +827,29 @@ Como trabalho futuro planejamos projetar um algoritmo de adaptação de qualidad
 
 
 \section{Cronograma}
+
+\begin{table}[h]
+    \centering
+    \caption{Cronograma de atividades para 12 meses}
+    \label{tab:cronograma}
+    \begin{tabular}{|p{4cm}|*{12}{c|}}
+        \hline
+        \textbf{Atividades/Meses} & \textbf{Mês 1} & \textbf{Mês 2} & \textbf{Mês 3} & \textbf{Mês 4} & \textbf{Mês 5} & \textbf{Mês 6} & \textbf{Mês 7} & \textbf{Mês 8} & \textbf{Mês 9} & \textbf{Mês 10} & \textbf{Mês 11} & \textbf{Mês 12} \\
+        \hline
+        Revisão da literatura & X & X & & & & & & & & & & \\
+        \hline
+        Coleta de dados &  & X & X & & & & & & & & & \\
+        \hline
+        Análise de dados & &  & X & X & & & & & & & & \\
+        \hline
+        Redação do trabalho & X & X & X & X & X & X & & & & & & \\
+        \hline
+        Revisão do trabalho & &  & & X & X & X & X & & & & & \\
+        \hline
+        Entrega do trabalho final & & & & & & & X & X & X & X & X & X \\
+        \hline
+    \end{tabular}
+\end{table}
 
 
 
