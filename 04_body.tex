@@ -64,40 +64,46 @@ O restante deste estudo está organizado da seguinte forma: No Capítulo 2, é r
 
 \chapter{Modelagem do sistema de streaming adaptativo de vídeo esférico com ladrilhos}\label{Cap:Problem Design}
 
-Atualmente o vídeo esférico se utiliza da infraestrutura de estreaming tradicional com codificadores de vídeo como H.265 e protocolos de transmissão como DASH. Para isso a esfera do vídeo precisa passar por uma série de processamentos antes de ser disponibilizado para a transmissão, seja ao vivo ou sob demanda.
+Atualmente, os vídeos esféricos fazem uso da infraestrutura de streaming tradicional, com codificadores de vídeo como o H.265 e protocolos de transmissão como o DASH. Para isso, a esfera do vídeo precisa passar por uma série de processamentos antes de ser disponibilizada para a transmissão, seja ao vivo ou sob demanda.
 
-A figura~\ref{fig:streaming_client_server} mostra o diagrama geral do streaming de vídeo esférico com ladrilhos. Antes de disponibilizar o vídeo,  o servidor precisa projetar o vídeo em um plano, segmentar o plano espacialmente em ladrilhos, comprimir cada ladrilhos, segmentar os ladrilhos temporalmente em chunks e produzir um arquivo de manifesto descrevendo os ladrilhos e chunks. No lado do cliente, inicialmente o tocador de vídeo solicita o manifesto com o caminho dos chunks dos ladrilhos necessários para a exibição do vídeo. Com informação dos chunks e dos recursos do sistema, o cliente solicita os chunks necessários através de um cliente HTTP. Os chunks que chegam são decodificados, e o vídeo é apresentado ao usuário.
+A Figura~\ref{fig:streaming_client_server} mostra o diagrama geral do streaming de vídeo esférico com ladrilhos. Antes de disponibilizar o vídeo, o servidor precisa projetar o vídeo em um plano, segmentar o plano espacialmente em ladrilhos, comprimir cada ladrilho, segmentar os ladrilhos temporalmente em chunks e produzir um arquivo de manifesto descrevendo os ladrilhos e chunks. No lado do cliente, inicialmente, o tocador de vídeo solicita o manifesto com o caminho dos chunks dos ladrilhos necessários para a exibição do vídeo. Com informações dos chunks e dos recursos do sistema, o cliente solicita os chunks necessários através de um cliente HTTP. Os chunks que chegam são decodificados, e o vídeo é apresentado ao usuário.
 
-antes de detalhar cada uma destas etapas, será necessário apresentar algumas convenção sobre o sistemas de coordenadas utilizados. Foi necessário desenvolver uma biblioteca em Python chamada py360tools\footnote{https://github.com/henriquedgarcia/py360tools} que realiza o mapeamento entre diferentes projeções, extrai viewport, exibe os ladrilhos vistos pelo viewport e calcula métricas de distorção esféricas da projeção, como WS-MSE e distorção do viewport como MSE e SSIM, todos para vídeos com ladrilhos.
+
+Antes de detalhar cada uma destas etapas, será necessário apresentar algumas convenções sobre os sistemas de coordenadas utilizados. Foi necessário desenvolver um módulo em Python chamada py360tools\footnote{https://github.com/henriquedgarcia/py360tools} que realiza o mapeamento entre diferentes projeções, extrai o viewport, exibe os ladrilhos que aparecem no viewport e calcula métricas de distorção esférica da projeção, como WS-MSE da projeção ladrilhada e do viewport.
+
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.9\linewidth]{"fig/Streaming - client-side and server-side.pdf"}
-	\caption{Sistema de streaming de vídeo esférico.}
+	\caption{Sistema de streaming de vídeo esférico do cliente e do servidor.}
 	\label{fig:streaming_client_server}
 \end{figure}
 
-\section{Os sistemas de coordenadas}
+\section{O módulo py360tools}
 
-Baseado na biblioteca 360lib da MPEG\footnote{https://mpeg.chiariglione.org/standards/exploration/future-video-coding/n17197-algorithm-descriptions-projection-format-conversion}, utilizamos dois sistemas de coordenadas comuns na literatura e deduzimos suas relações para realizar a caracterização dos ladrilhos. Usando vetores no espaço cartesiano de três dimensões como referencial inercial, que contém a esfera do vídeo, o movimento de cabeça do usuário pode ser descrito utilizando Ângulos de Euler afim de extrair o viewport.  Para isto, usamos uma variação do sistema de coordenadas esférico chamado de sistema de coordenadas horizontal afim de identificar os pixels na esfera sem nos preocuparmos com o comprimento dos vetores. A seguir descrevemos mais detalhadamente cada sistema.
+O módulo py360tools consiste em um conjunto de funções e objetos baseados na biblioteca 360lib da MPEG\footnote{https://mpeg.chiariglione.org/standards/exploration/future-video-coding/n17197-algorithm-descriptions-projection-format-conversion} para manipular as projeções em um sistema de coordenadas comum. Neste módulo, utilizamos dois sistemas de coordenadas populares na literatura e deduzimos suas relações para conseguir realizar a caracterização dos ladrilhos. Usando vetores no espaço cartesiano de três dimensões como referencial inercial, que contém a esfera do vídeo, o movimento de cabeça do usuário pode ser descrito utilizando ângulos de Euler para extrair o \textit{viewport} e determinar os ladrilhos necessários. Para isso, usamos uma variação do sistema de coordenadas esféricas chamado de sistema de coordenadas horizontal para identificar os pixels na esfera sem nos preocuparmos com o comprimento dos vetores. A seguir, descrevemos mais detalhadamente cada sistema.
 
 \subsection{Sistema de Coordenadas Cartesiano}
 
-O sistema de coordenadas cartesiano, dextrogiro, representado na figura~\ref{fig:coordenadas} é usado para descrever e operar a esfera no espaço de 3 dimensões através de operações de álgebra linear. O vídeo esférico é representado com o usuário no centro de uma esfera de raio 1. Na posição inicial, o eixo Z aponta para a frente, o eixo X aponta para a direita e o eixo Y aponta para baixo. O arco azul representa o FOV do usuário. Assim, qualquer ponto na esfera pode ser representado por um vetor $ \overrightarrow{v} = (x,y,z) $.
+
+O sistema de coordenadas cartesiano, dextrogiro, representado na Figura~\ref{fig:coordenadas}, é utilizado para descrever e operar a esfera no espaço tridimensional por meio de operações de álgebra linear. O vídeo esférico é representado com o usuário no centro de uma esfera de raio 1. Na posição inicial, o eixo Z aponta para frente, o eixo X aponta para a direita e o eixo Y aponta para baixo. O arco azul representa o campo de visão (do inglês FOV - \textit{Field of Vision}) do usuário. Assim, qualquer ponto na esfera pode ser representado por um vetor $\overrightarrow{v} = (x,y,z)$.
+
+
 
 \begin{figure}[h]
 	\centering
 	\subfigure[Sistema de coordenadas de referência. \label{fig:coordenadas}]
 	{\includegraphics[width=0.40\linewidth]{fig/coordenadas.png}} \quad	 \quad
-	\subfigure[ângulos de Euler e sua representação do movimento de cabeça. \label{fig:bcs}]
+	\subfigure[Ângulos de Euler e sua representação do movimento de cabeça. \label{fig:bcs}]
 	{\includegraphics[width=0.40\linewidth]{fig/bcs.png}}
-	\caption{Os Sistemas de Coordenadas em um espaço cartesiano}
+	\caption{Os Sistemas de Coordenadas em um espaço euclidiano.}
 	\label{fig:coord_sis}
 \end{figure}
 
-Para descrever a direção da cabeça do usuário, usamos um conjunto de ângulos de Euler (yaw, pitch e roll) para realizar a rotação da esfera usando a sequencia y-x-z de rotação dos eixos. A relação dos ângulos com o movimento da cabeça pode ser visto na Figura~\ref{fig:bcs}. O yaw indica a rotação do eixo y, o pitch a rotação do eixo X e o Roll a rotação do eixo Z. Tal convenção também conhecida como angulos de Tait–Bryan é comumente usado em aplicações aeroespaciais. Os valores de yaw, pitch e roll são relativos ao vetor (0, 0, 1) que aponta para a posição inicial. Por se tratar de rotação, os valores dos ângulos podem assumir qualquer valor valor real (em radianos). Por convenção, todas as rotações em sentido horário são positivas e em sentido anti-horário são negativas. Assim, olhar para cima indica um \textit{pitch} positivo, olhar para a direita indica um \textit{yaw} positivo e rodar a cabeça em sentido horário indica um \textit{roll} positivo.
+Para descrever a direção da cabeça do usuário, usamos um conjunto de ângulos de Euler (\textit{yaw}, \textit{pitch} e \textit{roll}) para realizar a rotação da esfera usando a sequência de rotação dos eixos y-x-z. A relação dos ângulos com o movimento da cabeça pode ser vista na Figura~\ref{fig:bcs}. O \textit{yaw} indica a rotação do eixo y, o \textit{pitch} a rotação do eixo X e o \textit{roll} a rotação do eixo Z. Essa convenção, também conhecida como ângulos de Tait–Bryan, é comumente usada em aplicações aeroespaciais. Os valores de \textit{yaw}, \textit{pitch} e \textit{roll} são relativos ao vetor $(0, 0, 1)$ que aponta para a posição inicial. Por se tratar de rotação, os valores dos ângulos podem assumir qualquer valor real (em radianos). Por convenção, todas as rotações no sentido horário são positivas e no sentido anti-horário são negativas. Assim, olhar para cima indica um \textit{pitch} positivo, olhar para a direita indica um \textit{yaw} positivo e rodar a cabeça em sentido horário indica um \textit{roll} positivo.
 
-A rotação de um ponto no sistema de referência (fixo) com os ângulos de Euler pode ser representada por uma equação na forma matricial $\overrightarrow{V}^T = \overrightarrow{R} \times \overrightarrow{v}^T $, onde $\overrightarrow{V}^T = (x',y',z')$ é a nova posição, $\overrightarrow{V}^T = (x,y,z)$ é o vetor no sistema de referência e $\overrightarrow{R}$ é a matriz de rotação dada pela equação~\ref{eq:matrotation}.
+A rotação de um ponto no sistema de referência (fixo) com os ângulos de Euler pode ser representada por uma equação na forma matricial $\overrightarrow{V}' = \overrightarrow{R} \times \overrightarrow{v}$, onde $\overrightarrow{V}' = (x',y',z')$ é a nova posição, $\overrightarrow{v} = (x,y,z)$ é o vetor no sistema de referência e $\overrightarrow{R}$ é a matriz de rotação dada pela equação~\ref{eq:matrotation}.
+
 
 \begin{equation}
 	R=\begin{bmatrix}
@@ -120,14 +126,14 @@ A rotação de um ponto no sistema de referência (fixo) com os ângulos de Eule
 
 \subsection{Sistema Horizontal}
 
-Para representar um ponto sobre a casca da esfera do vídeo, uma variação do sistema de coordenadas esféricas, chamado de sistema de coordenadas horizontal é usado como intermediário para operações entre projeções. O sistema de coordenadas horizontal é comumente usado em astronomia e é muito prático para localizar corpos em uma esfera, por não se preocupar com o comprimento do vetor. Uma vez que a esfera possui raio 1, este sistema simplifica muitos cálculos. O sistema de coordenadas horizontal utiliza dois ângulos chamados de azimute e altitude para representar a posição de ponto na esfera em relação a um ponto de referência.
+Para representar um ponto na superfície da esfera do vídeo, utilizamos uma variação do sistema de coordenadas esféricas conhecida como sistema de coordenadas horizontal. Esse sistema é comumente utilizado em astronomia e é bastante prático para localizar corpos em uma esfera, pois não leva em consideração o comprimento do vetor. Como a esfera tem raio 1, esse sistema simplifica muitos cálculos. O sistema de coordenadas horizontal utiliza dois ângulos, chamados azimute e altitude, para representar a posição de um ponto na esfera em relação a um ponto de referência.
 
-Como mostra a figura~\ref{fig:hcs}, neste sistema, o azimute é o angulo da projeção do vetor $ \overrightarrow{v}$ no plano ZX (horizonte) em relação ao eixo Z e a altitude é a elevação vertical do vetor em relação ao plano do horizonte. Por convenção, a elevação varia de -90° a 90°, sendo que o sinal positivo aponta para acima do horizonte, enquanto que o azimute varia de -180° a 180°, sendo que o sinal positivo está à direita do eixo Z. Desta forma, o pixel na posição (elevação, azimute) igual a (0,0) encontra-se no ponto (x=0, y=0, z=1).
+Como mostra a Figura~\ref{fig:hcs}, neste sistema, o azimute é o ângulo da projeção do vetor $\overrightarrow{v}$ no plano ZX (horizonte) em relação ao eixo Z, e a altitude é a elevação vertical do vetor em relação ao plano do horizonte. Por convenção, a elevação varia de -90$^\circ$ a 90$^\circ$, sendo que o sinal positivo aponta para cima do horizonte, enquanto que o azimute varia de -180$^\circ$ a 180$^\circ$, sendo que o sinal positivo está à direita do eixo Z. Desta forma, o pixel na posição (elevação, azimute) igual a (0, 0) encontra-se no ponto (x=0, y=0, z=1).
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.30\linewidth]{fig/hcs.png}
-	\caption{O Sistema de Coordenadas Horizontal}
+	\caption{O Sistema de Coordenadas Horizontal.}
 	\label{fig:hcs}
 \end{figure}
 
@@ -144,12 +150,11 @@ As equações para conversão das coordenadas cartesianas em coordenadas horizon
 
 \section{Projeção}
 
-Projeções são um tipo de mapeamento entre dois espaços vetoriais. No caso, a esfera, descrita no plano cartesiano de três dimensões é mapeada em um plano bidimensional representado pela imagem que será codificada. Estas técnicas são muito conhecidas no ambiente de desenvolvimento de modelagem 3D como Blender, Unreal e Unity que utilizam projeções para armazenamento de texturas em arquivos de imagem tradicionais como JPGE e PNG. Ao desenhar o objeto 3D na tela, o motor gráfico busca os pixels correspondentes na imagem e atribui a superfície do objeto.
-
+Projeções são um tipo de mapeamento entre dois espaços vetoriais. No caso específico de vídeo esférico, a esfera, descrita no plano cartesiano de três dimensões, é mapeada em um plano bidimensional representado pela imagem que será codificada. Essas técnicas são amplamente utilizadas no ambiente de desenvolvimento de modelagem 3D, como o Blender, Unreal e Unity, que empregam projeções para o armazenamento de texturas em arquivos de imagem tradicionais, como JPGE e PNG. Ao desenhar o objeto 3D na tela, o motor gráfico busca os pixels correspondentes na imagem e os atribui à superfície do objeto.
 
 \subsection{Projeção Equirretangular}
 
-A projeção equirretangular é uma técnica de mapeamento cartográfico de uma esfera para um plano retangular, preservando a proporção dos pixels, mas distorcendo a imagem. Isto é, quando mais próximo dos polos, os pixels diminuem a altura enquanto aumentam sua largura. Isto produz fortes deformações na região próxima aos polos, mas como os usuários tendem a manter o olhar a altura do horizonte, a maior parte do conteúdo do vídeo é facilmente visualizado. A figura~\ref{fig:erp} apresenta como é feita a projeção.
+A projeção equirretangular é uma técnica de mapeamento cartográfico de uma esfera para um plano retangular, preservando a proporção dos pixels, mas distorcendo a imagem. Quando mais próximo dos polos, os pixels diminuem em altura enquanto aumentam em largura. Isso resulta em fortes deformações na região próxima aos polos. No entanto, como os usuários tendem a manter o olhar na altura do horizonte, a maior parte do conteúdo do vídeo é facilmente visualizado. A figura~\ref{fig:erp} ilustra como é feita essa projeção. Considerando que na vertical mapeamos 180° de elevação e na horizontal mapeamos 360° de azimute, podemos mapear diretamente cada pixel em coordenadas horizontais para em seguida converte-las para coordenadas cartesianas.
 
 \begin{figure}[h]
 	\centering
@@ -158,7 +163,7 @@ A projeção equirretangular é uma técnica de mapeamento cartográfico de uma 
 	\label{fig:erp}
 \end{figure}
 
-No mapeamento de um vídeo 360° usando a projeção equirretangular, a esfera do vídeo é desdobrada em um plano 2D retangular, onde cada ponto na esfera é mapeado para um pixel correspondente na imagem retangular. Primeiro, a posição do pixel na esfera em coordenadas cartesianas é convertido para o sistema de coordenadas horizontal usando as equações~\ref{eq:cart2hcs}. Em seguida, as coordenadas são normalizadas em um plano levogiro uv onde u e v variam de 0 a 1. Neste sistema o eixo u aponta para a direita e o eixo v aponta para baixo e sua relação com sistema cartesiano é representado pelas equações~\ref{eq:hcs2erp}. Por fim as coordenadas na imagem  $(m, n)$ são dadas multiplicando $u$ e $v$ pela largura ($W$) e altura ($H$) da  imagem, respectivamente. Como dificilmente um ponto no espaço coincide com o centro do pixel, podemos aplicar alguma técnica de interpolação como interpolação linear ou interpolação por vizinho mais próximo.
+No mapeamento de um vídeo 360° usando a projeção equirretangular, a esfera do vídeo é desdobrada em um plano 2D retangular, onde cada ponto na esfera é mapeado para um pixel correspondente na imagem retangular. Primeiramente, a posição do pixel na esfera em coordenadas cartesianas é convertida para o sistema de coordenadas horizontal usando as equações~\ref{eq:cart2hcs}. Em seguida, as coordenadas são normalizadas em um plano UV, onde U e V variam de 0 a 1. Neste sistema, o eixo U aponta para a direita e o eixo V aponta para baixo, e sua relação com o sistema cartesiano é representada pelas equações~\ref{eq:hcs2erp}. Por fim, as coordenadas na imagem $(m, n)$ são obtidas multiplicando U e V pela largura (W) e altura (H) da imagem, respectivamente. Como é improvável que um ponto no espaço coincida exatamente com o centro do pixel, técnicas de interpolação como interpolação linear ou interpolação pelo vizinho mais próximo podem ser aplicadas.
 
 \begin{equation}
 	\label{eq:hcs2erp}
