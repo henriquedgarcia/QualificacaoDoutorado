@@ -2,7 +2,7 @@
 
 % \section{Motivation}
 
-Streaming de vídeo esféricos, ou vídeos 360°, é uma relativamente nova aplicação multimídia para realiadade virtual (do inglês VR - Virtual Reality) que chamou muita atenção nos últimos anos com a população dos óculos de realidade virtual, também conhecidos como visor de cabeça (do inglês HMD - Head Mounted Display) e o lançamento do Metaverso pela Meta. Como apresentado na figura~\ref{fig:video360}, os vídeos esféricos (ou vídeo 360°) são projetados e reproduzidos na casca interna de uma esfera e o usuário é posto no centro. Usando informações dos sensores de movimento do HMD, o usuário tem liberdade para olhar ao redor movendo a cabeça em três graus de liberdade enquanto o HMD exibe o vídeo em uma janela de visualização chamada viewport. Além dos HMD os vídeos esféricos também podem ser reproduzidos em dispositivos celulares, aplicativos desktop e navegadores web através do movimento do mouse. Esta facilidade permite que praticamente qualquer dispositivo reproduza os vídeos esféricos facilitando seu acesso.
+Streaming de vídeos esféricos, ou vídeos 360°, é uma relativamente nova aplicação multimídia para realiadade virtual (do inglês VR - Virtual Reality) que chamou muita atenção nos últimos anos com a populariza\c c\~ao dos óculos de realidade virtual, também conhecidos como visor de cabeça (do inglês HMD - Head Mounted Display) e o lançamento do Metaverso pela Meta. Como apresentado na figura~\ref{fig:video360}, os vídeos esféricos (ou vídeo 360°) são projetados e reproduzidos na casca interna de uma esfera e o usuário é posto no centro. Usando informações dos sensores de movimento do HMD, o usuário tem liberdade para olhar ao redor movendo a cabeça em três graus de liberdade enquanto o HMD exibe o vídeo em uma janela de visualização chamada viewport. Além dos HMD os vídeos esféricos também podem ser reproduzidos em dispositivos celulares, aplicativos desktop e navegadores web através do movimento do mouse. Esta facilidade permite que praticamente qualquer dispositivo reproduza os vídeos esféricos facilitando seu acesso.
 
 \begin{figure}[h]
 	\centering
@@ -63,7 +63,7 @@ O restante deste estudo está organizado da seguinte forma: No Capítulo 2, é r
 
 \chapter{Modelagem do sistema de streaming adaptativo de vídeo esférico com ladrilhos}\label{Cap:Problem Design}
 
-No vídeo esférico, diferente do vídeo tradicional que é plano, os quadros do vídeo são projetados no interior de uma esfera 3D, onde o usuário, localizado no centro, possui três graus de liberdade para olhar ao redor movimentando a cabeça. A figura~\ref{fig:streaming_client_server} mostra o diagrama geral do streaming de vídeo esférico com ladrilhos. Antes de iniciar a transmissão o servidor precisa projetar o vídeo em um plano, segmentar o plano em ladrilhos, comprimir os ladrilhos com algum codificar com H.265, segmentar os ladrilhos em chunks de mesma duração e produzir um manifesto DASH. No lado do cliente, o tocador de vídeo solicita o manifesto com o caminho dos chunks dos ladrilhos. Com informação do preditor de cabeça e do buffer de recepção o cliente HTTP solicita os chunks necessários para extrair o viewport. Os chunks são decodificados, a projeção é reconstruída, o viewport é extraído e apresentado ao usuário. Cada uma destas etapa será detalhada nas seções a seguir, mas antes é necessário descrever estes processos, vamos apresentar a convenção dos diversos sistemas de coordenadas utilizados. Foi necessário desenvolver uma biblioteca em Python chamada video360tools\footnote{https://github.com/henriquedgarcia/video360utils} que realiza o mapeamento entre diferentes sistemas coordenadas para as projeções equirretangular e cubemap. Para isto foi definido a relação entre os sistemas de coordenadas cartesiano e sistema de coordenadas horizontal para a conforme descrito a seguir.
+No vídeo esférico, diferente do vídeo tradicional que é plano, os quadros do vídeo são projetados no interior de uma esfera 3D, onde o usuário, localizado no centro, possui três graus de liberdade para olhar ao redor movimentando a cabeça. A figura~\ref{fig:streaming_client_server} mostra o diagrama geral do streaming de vídeo esférico com ladrilhos. Antes de iniciar a transmissão o servidor precisa projetar o vídeo em um plano, segmentar o plano em ladrilhos, comprimir os ladrilhos com algum codificar com H.265, segmentar os ladrilhos em chunks de mesma duração e produzir um manifesto DASH. No lado do cliente, o tocador de vídeo solicita o manifesto com o caminho dos chunks dos ladrilhos. Com informação do preditor de cabeça e do buffer de recepção, o cliente HTTP solicita os chunks necessários para extrair o viewport. Os chunks são decodificados, a projeção é reconstruída, o viewport é extraído e apresentado ao usuário. Cada uma destas etapa será detalhada nas seções a seguir, mas antes é necessário descrever estes processos, vamos apresentar a convenção dos diversos sistemas de coordenadas utilizados. Foi necessário desenvolver uma biblioteca em Python chamada video360tools\footnote{https://github.com/henriquedgarcia/video360utils} que realiza o mapeamento entre diferentes sistemas coordenadas para as projeções equirretangular e cubemap. Para isto foi definido a relação entre os sistemas de coordenadas cartesiano e sistema de coordenadas horizontal para a conforme descrito a seguir.
 
 \begin{figure}[h]
 	\centering
@@ -93,10 +93,9 @@ O sistema de coordenadas cartesiano, dextrogiro, representado na figura~\ref{fig
 Para descrever a direção da cabeça do usuário, consideramos que rodar a cabeça em uma direção é equivalente a rodar a esfera na direção oposta. Para isso, usamos um conjunto de ângulos de Euler (yaw, pitch e roll) para realizar a rotação da esfera usando a sequencia y-x-z. A relação dos ângulos com o movimento da cabeça pode ser visto na Figura~\ref{fig:bcs}. O yaw indica a rotação do eixo y, o pitch a rotação do eixo X e o Roll a rotação do eixo Z. Tal convenção também conhecida como angulos de Tait–Bryan é muito usado em aplicações aeroespaciais. Estes ângulos coincide com os angulos do sistema de coordenadas horizontal facilitando a identificação do centro do viewport. Sua valores são relativos à posição inicial (elevação=0 e azimute=0 no sistema horizontal, ou o vetor (0, 0, 1) no sistema cartesiano). Por se tratar de rotação, os valores dos ângulos podem assumir qualquer valor valor real (em radianos). Por convenção, todas as rotações em sentido horário são positivas e em sentido anti-horário são negativas. Assim, olhar para cima possui um \textit{pitch} positivo, olhar para a direita possui um \textit{yaw} positivo e rodar a cabeça em sentido horário possui um \textit{roll} positivo.
 
 A rotação de um ponto no sistema de referência (fixo) com os ângulos de Euler pode ser representada por uma equação na forma matricial $\overrightarrow{V}^T = \overrightarrow{R} \times \overrightarrow{v}^T $, onde $\overrightarrow{V}^T = (x',y',z')$ é a nova posição, $\overrightarrow{V}^T = (x,y,z)$ é o vetor no sistema de referência e $\overrightarrow{R}$ é a matriz de rotação dada pela equação~\ref{eq:matrotation}.
-
 \begin{equation}
 	R=\begin{bmatrix}
-		cos(yaw) & 0 & sin(yaw)\\
+		\cos(yaw) & 0 & \sin(yaw)\\
 		0 & 1 & 0\\
 		-sin(yaw) & 0 & cos(yaw)
 	\end{bmatrix}
@@ -318,33 +317,30 @@ Em uma aplicação DASH, inicialmente o cliente deve solicitar um arquivo de man
 \subsection{Qualidade para o cliente}
 No processo de preparação para o \textit{streaming} de vídeos esféricos, a esfera de vídeo passa por um mapeamento em um plano, introduzindo distorções que variam ao longo do plano. Ao utilizar métodos de compressão com perda, os codificadores geralmente aplicam a quantização de forma uniforme em todo o quadro, podendo impactar mais severamente em regiões distorcidas pela projeção. Após a decodificação, os pixels renderizados são remapeados de volta para a esfera, e quaisquer artefatos de codificação, como blocados, aliasing, efeito de \textit{Gibbs}, borrado, etc, também serão distorcidos.
 
-Assim, a qualidade objetiva da viewport é definida como a disparidade entre o viewport extraído do vídeo codificado e o viewport de um vídeo de referência.   A Figura~\ref{fig:QualityWorkflow} ilustra como medir a qualidade objetiva do \textit{viewport}, considerando a esfera sem degradação e a esfera recuperada após a compressão. A viewport precisa ser extraída com base na posição da cabeça do usuário em ambos os vídeos de referência e codificado, assim o MSE e SSIM devem ser calculados entre esses quadros. O MSE foi usado no lugar do PSNR, pois o PSNR deve ser calculado apenas após o cálculo da média do MSE de todos os quadros de um vídeo, como mostra a documentação do filtro de PSNR do ffmpeg\footnote{https://ffmpeg.org/ffmpeg-filters.html}. As operações de cálculo MSE e do SSIM foram calculadas usando a biblioteca scikit-image. Apesar do MSE e o SSIM falhem ao tentar medir qualidade sob certas condições, elas são suficientes para se medir distorções produzidas por artefatos esperados como bordas de ladrilho, borrado e blocado.~\cite{Bovik2009} 
-
-\begin{figure}[h]
+Assim, a qualidade objetiva da viewport é definida como a disparidade entre o viewport extraído do vídeo codificado e o viewport de um vídeo de referência.   A Figura~\ref{fig:QualityWorkflow} ilustra como medir a qualidade objetiva do \textit{viewport}, considerando a esfera sem degradação e a esfera recuperada após a compressão. A viewport precisa ser extraída com base na posição da cabeça do usuário em ambos os vídeos de referência e codificado, assim o MSE e SSIM devem ser calculados entre esses quadros. O MSE foi usado no lugar do PSNR, pois o PSNR deve ser calculado apenas após o cálculo da média do MSE de todos os quadros de um vídeo, como mostra a documentação do filtro de PSNR do ffmpeg\footnote{https://ffmpeg.org/ffmpeg-filters.html}. As operações de cálculo MSE e do SSIM foram calculadas usando a biblioteca scikit-image. Apesar do MSE e o SSIM falharem ao tentar medir qualidade sob certas condições, elas são suficientes para medir distorções produzidas por artefatos esperados como bordas de ladrilho, borrado e blocado.~\cite{Bovik2009} 
+\begin{figure}[htb]
         \centering
         \includegraphics[width=0.8\linewidth]{fig/Project_Quality_Workflow_2.png}
         \caption{Avaliação de qualidade objetiva do viewport.}
         \label{fig:QualityWorkflow}
 \end{figure}
 
-Quando o vídeo é segmentado em ladrilhos, é necessário reconstruir a projeção com os ladrilhos que são visualizados durante todo o período de duração de um \textit{chunk}. Como o usuário está movimentando a cabeça, durante um \textit{chunk} os ladrilhos vistos podem se modificar. Para o DASH o \textit{chunk} inteiro precisa estar no \textit{buffer} do cliente para que apenas alguns quadros possam ser decodificados. A aplicação cliente precisa saber de antemão quais ladrilhos serão vistos e então solicitá-los ao servidor. Por exemplo, na figura~\ref{fig:selectTiles} vemos uma projeção equirretangular segmentada em 3x3 ladrilhos. No instante 0 o usuário está visualizando os ladrilhos 3, 4, 6, 7 e 8, porém, devido ao movimento da cabeça, antes de se concluir a reprodução do \textit{chunk}, o usuário passa a ver os ladrilhos 0, 1, 3, 4, 6 e 7. Os ladrilhos 0 e 1 passaram a ser vistos e o ladrilho 8 deixou de ser visto. Os ladrilhos 0 e 1 precisam já ter sido baixados e decodificados para que o usuário veja seu conteúdo nos instantes finais do \textit{chunk}.
-
-\begin{figure}[h]
+Quando o vídeo é segmentado em ladrilhos, é necessário reconstruir a projeção com os ladrilhos que são visualizados durante todo o período de duração de um \textit{chunk}. Como o usuário está movimentando a cabeça, durante um \textit{chunk} os ladrilhos vistos podem se modificar. Para o DASH, o \textit{chunk} inteiro precisa estar no \textit{buffer} do cliente para que apenas alguns quadros possam ser decodificados. A aplicação cliente precisa saber de antemão quais ladrilhos serão vistos e então solicitá-los ao servidor. Por exemplo, na figura~\ref{fig:selectTiles} vemos uma projeção equirretangular segmentada em $3 \times 3$ ladrilhos. No instante 0, o usuário está visualizando os ladrilhos 3, 4, 6, 7 e 8. Porém, devido ao movimento da cabeça, antes de se concluir a reprodução do \textit{chunk}, o usuário passa a ver os ladrilhos 0, 1, 3, 4, 6 e 7. Os ladrilhos 0 e 1 passaram a ser vistos e o ladrilho 8 deixou de ser visto. Os ladrilhos 0 e 1 precisam já ter sido baixados e decodificados para que o usuário veja seu conteúdo nos instantes finais do \textit{chunk}.
+\begin{figure}[htb]
         \centering
         \includegraphics[width=0.5\linewidth]{fig/Streaming of Tiles 2.png}
         \caption{Tiles que deverão ser solicitados ao servidor e que serão assistidos durante um \textit{chunk}.}
         \label{fig:selectTiles}
 \end{figure}
 
-Em um cenário com decodificadores operando em paralelo o tempo para a decodificação dos chunks do viewport será igual ao maior tempo de decodificação entre todos os tiles selecionados. Porém, em um ambiente com threads simples, o tempo de decodificação será igual a soma de todos os tempos de decodificação. A taxa de bits necessária para a reprodução do viewport será igual soma de todos os ladrilhos que foram visualizados durante a duração de um chunk.
+Em um cenário com decodificadores operando em paralelo, o tempo para a decodificação dos chunks do viewport será igual ao maior tempo de decodificação entre todos os tiles selecionados. Porém, em um ambiente com threads simples, o tempo de decodificação será igual a soma de todos os tempos de decodificação. A taxa de bits necessária para a reprodução do viewport será igual \`a soma de todos os ladrilhos que foram visualizados durante a duração de um chunk.
 
 \subsection{Qualidade para o servidor}
 
 Por outro lado, para sistemas de transmissão adaptativos como o MPEG DASH, a qualidade do vídeo codificado está diretamente correlacionada com sua taxa de bits. Esta correlação baseia-se no pressuposto de que uma taxa de bits mais elevada corresponde a uma melhor qualidade. A lógica por trás dessa relação reside no fato de que a qualidade medida, normalmente avaliada usando métricas como PSNR ou MSE, quantifica o erro induzido pela quantização no processo de compressão com perdas. Neste contexto, o aumento da quantização leva a uma perda de detalhes e a uma maior compressão, reduzindo a qualidade e também a taxa de bits.
 
 No entanto, é importante notar que as métricas SSIM e PSNR podem não ser adequadas para avaliar diretamente a qualidade da projeção, especialmente considerando as distorções introduzidas durante o processo de projeção. Consequentemente, métricas de qualidade esféricas foram desenvolvidas para avaliar o nível objetivo de qualidade de uma projeção. A parte superior da Figura \ref{fig:QualityDiagram} ilustra como a “qualidade objetiva da projeção” deve ser medida. Métricas de qualidade devem ser aplicadas entre a projeção antes da codificação (vídeo de referência) e a projeção decodificada após a compressão (vídeo degradado).
-
-\begin{figure}[h]
+\begin{figure}[htb]
         \centering
         \includegraphics[width=0.7\linewidth]{fig/diagrama e qualidade 1.png}
         \caption{Avaliação de qualidade objetiva da projeção.}
@@ -358,12 +354,11 @@ Para formular um algoritmo eficaz de adaptação de taxa de bits (ABR) adaptado 
 \subsubsection{MSE/PSNR}
 
 PSNR, ou \textit{Peak Signal-to-Noise Ratio}, e o MSE (\textit{Mean Squared Error}) são métricas amplamente utilizada para avaliar a qualidade de imagens e vídeos reconstruídos ou compactados. Quantifica a relação entre a potência máxima possível de um sinal (neste contexto, uma imagem ou vídeo) e a potência do ruído corruptor que impacta a qualidade do sinal. As duas métricas se relacionam através da seguinte fórmula:
-
 \begin{align}
         \label{MSE}
         MSE&= \frac{1}{M\times N}\sum^{M-1}_{i=0}\sum^{N-1}_{j=0} \left(y(i,j) - y'(i,j)\right)^2 \\
         \label{PSNR}
-        PSNR&=10 \times \log_{10}\left(\frac{MAX^2_I}{MSE}\right)
+        PSNR&=10 \times \log_{10}\left(\frac{MAX^2_I}{MSE}\right).
 \end{align}
 
 Primeiro, o MSE é calculado para todos os quadros do vídeo e, no final da reprodução, a média do MSE é usado para calcular o PSNR (\textit{Peak Signal-to-Noise Ratio}). Para um vídeo segmentado em ladrilhos, considere que $L_{quadro} $ é a lista de quadros tocados pelo viewport ao longo da reprodução do vídeo e $MSE_{frame}(i)$ é o MSE de um quadro. A qualidade de uma seção de vídeo assistido pelo usuário, é definida pelo PSNR utilizando a média do MSE de todos quadros que aparecerem no viewport, como mostra a equação~\ref{eq:agerage_MSE}.
@@ -395,7 +390,6 @@ O S-PSNR emprega uma lista de 655.362 pontos equidistantes na esfera para identi
 \subsubsection{WS-MSE/WS-PSNR}
 
 O WS-MSE e o WS-PSNR incorporam pesos para cada pixel da projeção ao calcular MSE, conforme expresso nas Equações \ref{eq:WMSE} e \ref{eq:WS-PSNR}. Considerando uma projeção com resolução MxN, o WS-MSE primeiro calcula a média ponderada do quadrado das diferenças dos pixels y e y' na posição (i,j) para todos os pixels de cada quadro. O cálculo do WS-PSNR só é aplicado sobre a média do WS-MSE de todos os quadros.
-
 \begin{align}
         \label{eq:WMSE}
         MSE&= \frac{\sum^{M-1}_{i=0}\sum^{N-1}_{j=0} \left(y(i,j) - y'(i,j)\right)^2 \times w(i,j)}{\sum^{M-1}_{i=0} \sum^{N-1}_{j=0} w(i,j)}\\[12pt]
@@ -404,10 +398,9 @@ O WS-MSE e o WS-PSNR incorporam pesos para cada pixel da projeção ao calcular 
 \end{align}
 
 Os pesos de cada pixel dependem da sua posição na projeção e do tipo de projeção. Projeções como ERP esticam mais os polos enquanto a projeção Cubemap distribui as faces na imagem de forma arbitrária. As equações \ref{eq:w_wpsnr1} e \ref{eq:w_wpsnr2} delineiam os pesos para as projeções equirretangular (ERP) e cubemap (CMP). No caso de uma projeção Cubemap, considera-se que todas as faces do cubo são quadradas e possuem resolução $A \times A$. O resultado pode ser visto na figura~\ref{fig:wspsnr}
-
 \begin{align}
         \label{eq:w_wpsnr1}
-        w_{ERP}(i,j)&=cos\left(\frac{(j+0.5-N/2)\pi}{N}\right) \\
+        w_{ERP}(i,j)&= \cos\left(\frac{(j+0.5-N/2)\pi}{N}\right) \\
         \label{eq:w_wpsnr2}
         w_{CMP}(i,j)&=\left(1 + \frac{d^2(i,j)}{r^2}\right)^{\frac{-3}{2}} \\
         d^2(i, j)&=(i+0.5-\dfrac{A}{2})^2 +(j+0.5-\dfrac{A}{2})^2
@@ -415,21 +408,21 @@ Os pesos de cada pixel dependem da sua posição na projeção e do tipo de proj
 
 \subsection{Estatísticas}
 
-Determinar as estatísticas das métricas é muito importante afim de entender seu comportamento e distribuição ao longo da reprodução para diferentes tipos de conteúdos. A distribuição das métricas de tempo de decodificação, taxa de bits e qualidade objetiva foram analisadas considerando que as distribuições são positivas e contínuas, descartando distribuições discretas e distribuições sobre a reta real. Considerando também as distribuições disponíveis nos pacotes estatísticos mais comuns, como SciPy e Matlab, as distribuições analisadas são: Burr Tipo XII , Birnbaum-Saunders, Gamma, Inversa Gaussiana, Rayleigh, Log Normal, Generalized Pareto, Pareto, Half-Normal, e Exponencial. O processo de ajuste mais comum se baseia na estimação dos parâmetros por máxima verossimilhança e para a avaliação das distribuições foi utiliza o erro quadrático médio (RMSE).
+Determinar as estatísticas das métricas é muito importante afim de entender seu comportamento e distribuição ao longo da reprodução para diferentes tipos de conteúdos. A distribuição das métricas de tempo de decodificação, taxa de bits e qualidade objetiva foram analisadas considerando que as distribuições são positivas e contínuas, descartando distribuições discretas e distribuições sobre a reta real. Considerando também as distribuições disponíveis nos pacotes estatísticos mais comuns, como SciPy e Matlab, as distribuições analisadas são: Burr Tipo XII, Birnbaum-Saunders, Gamma, Inversa Gaussiana, Rayleigh, Log Normal, Generalized Pareto, Pareto, Half-Normal, e Exponencial. O processo de ajuste mais comum se baseia na estimação dos parâmetros por máxima verossimilhança e para a avaliação das distribuições foi utilizado o erro quadrático médio (RMSE).
 
-A correlação entre as métricas é feita entre todos os chunks de cada ladrilho. Como a correlação mede a dependência entre duas variáveis e as métricas variam de forma diferente para cada tipo de ladrilhamento e para cada qualidade de codificação, a correlação deve ser medida considerando apenas as ladrilhos de uma mesma qualidade e de uma mesma região de cada vídeo. Assim, as métricas de 60 chunks para cada ladrilho, para cada qualidade e para cada vídeo puderam ser correlacionada. Por fim a média de todas as correções são consideradas ao se comparar diferentes cenários.
+A correlação entre as métricas é feita entre todos os chunks de cada ladrilho. Como a correlação mede a dependência entre duas variáveis e as métricas variam de forma diferente para cada tipo de ladrilhamento e para cada qualidade de codificação, a correlação deve ser medida considerando apenas as ladrilhos de uma mesma qualidade e de uma mesma região de cada vídeo. Assim, as métricas de 60 chunks para cada ladrilho, para cada qualidade e para cada vídeo puderam ser correlacionadas. Por fim, a média de todas as correções são consideradas ao se comparar diferentes cenários.
 
 
 \chapter{Avaliação e resultados}\label{Cap:Evaluation}
 
-Para otimizar o streaming de vídeo esférico é essencial conhecer suas principais características que afetam seu desempenho e sua qualidade. Para caracterizar o tráfego de vídeo panorâmico de 360 graus ladrilhado com DASH-SRD, é essencial replicar as condições de transmissão, codificação e segmentação do vídeo durante uma seção do cliente. Além disso, as métricas de avaliação devem ser relacionadas a experiência do usuário e do servidor. Para o cliente o queremos medir o tempo de decodificação, a taxa de bits e a qualidade do vídeo exibido no viewport. Para o servidor, queremos que a melhor qualidade seja entregue com a menor taxa de bits possível e para isso avaliamos métricas de qualidade de codificação tradicional e de vídeo esférico e sua correlação com o a taxa de bits.
+Para otimizar o streaming de vídeo esférico é essencial conhecer suas principais características que afetam seu desempenho e sua qualidade. Para caracterizar o tráfego de vídeo panorâmico de 360 graus ladrilhado com DASH-SRD, é essencial replicar as condições de transmissão, codificação e segmentação do vídeo durante uma seção do cliente. Além disso, as métricas de avaliação devem ser relacionadas a experiência do usuário e do servidor. Para o cliente, queremos medir o tempo de decodificação, a taxa de bits e a qualidade do vídeo exibido no viewport. Para o servidor, queremos que a melhor qualidade seja entregue com a menor taxa de bits possível e, para isso, avaliamos métricas de qualidade de codificação tradicional e de vídeo esférico e sua correlação com o a taxa de bits.
 
 
 
 
 \section{Caracterização dos elementos do servidor}
 
-O fluxo de trabalho da caracterização é visto na figura~\ref{fig:fluxograma1}. Os vídeos selecionados São os mesmos empregados no estudo de Nasrabadi~\cite{Nasrabadi2019}. Seis vídeos foram gravados pessoalmente pelo autor em projeção equirretangular. Os demais vídeos foram obtidos do YouTube em projeção cúbica. O processo de download foi executado usando a ferramenta JDownloader\footnote{https://jdownloader.org/} e, devido a variabilidade de qualidades e formatos abrangendo da plataforma, demos preferência a vídeos codificados com h.264, resolução de 4K e 30 fps (quadros por segundo). Apesar disto, os vídeos estavam em duas projeções diferentes e possuíam grande variabilidade de resoluções e taxas de quadro. Isto nos levou a padronizá-los afim de podermos comparar suas características. 
+O fluxo de trabalho da caracterização é visto na figura~\ref{fig:fluxograma1}. Os vídeos selecionados são os mesmos empregados no estudo de Nasrabadi~\cite{Nasrabadi2019}. Seis vídeos foram gravados pessoalmente pelo autor em projeção equirretangular. Os demais vídeos foram obtidos do YouTube em projeção cúbica. O processo de download foi executado usando a ferramenta JDownloader\footnote{https://jdownloader.org/} e, devido a variabilidade de qualidades e formatos abrangendo da plataforma, demos preferência a vídeos codificados com h.264, resolução de 4K e 30 fps (quadros por segundo). Apesar disto, os vídeos estavam em duas projeções diferentes e possuíam grande variabilidade de resoluções e taxas de quadro. Isto nos levou a padronizá-los afim de podermos comparar suas características. 
 
 \begin{figure}[h]
         \centering
@@ -438,7 +431,7 @@ O fluxo de trabalho da caracterização é visto na figura~\ref{fig:fluxograma1}
         \label{fig:fluxograma1}
 \end{figure}
 
-Assim, topos os vídeos foram convertidos para as projeções cubemap e equirretangular usando o codificador de referência HM 16.9 com a biblioteca 360lib da MPEG\footnote{https://jvet.hhi.fraunhofer. de/svn/svn\_360Lib/}. Em seguida, convertidos para as resoluções $3240\times2160$ (CMP) e $4320\times2160$ (ERP), com taxa de quadros igual a 30 fps. A proporção da projeção foi definida dependendo da projeção utilizada. Para a projeção equirretangular, a proporção é de 2:1, pois ela mapeia os 360° em torno da esfera e os 180° de polo a polo. Já a projeção cúbica apresenta uma proporção de 3:2, pois cada uma das seis faces do cubo é projetada a 90° tanto na latitude quanto na longitude. Por questões práticas, os vídeos foram comprimidos sem perda usando codificador x265 do ffmpeg com CRF igual a 0 e armazenados em arquivos mp4.
+Assim, todos os vídeos foram convertidos para as projeções cubemap e equirretangular usando o codificador de referência HM 16.9 com a biblioteca 360lib da MPEG\footnote{https://jvet.hhi.fraunhofer. de/svn/svn\_360Lib/}. Em seguida, convertidos para as resoluções $3240\times2160$ (CMP) e $4320\times2160$ (ERP), com taxa de quadros igual a 30 fps. A proporção da projeção foi definida dependendo da projeção utilizada. Para a projeção equirretangular, a proporção é de 2:1, pois ela mapeia os 360° em torno da esfera e os 180° de polo a polo. Já a projeção cúbica apresenta uma proporção de 3:2, pois cada uma das seis faces do cubo é projetada a 90° tanto na latitude quanto na longitude. Por questões práticas, os vídeos foram comprimidos sem perda usando codificador x265 do ffmpeg com CRF igual a 0 e armazenados em arquivos mp4.
 
 A Tabela~\ref{tab:list_videos} exibe a lista dos cinquenta e seis vídeos utilizados. Os vídeos estão codificados com CRF 28 com a configuração padrão do codificador x265. Conforme estudo de Nasrabadi, os vídeos foram classificados de acordo com o movimento da câmera e o numero de objetos na cena. O número de objetos na cena foram definidos pelo autor. O valor da coluna "Grupo" é composto pela primeira inicial do tipo de movimento de câmera (fixo, horizontal, vertical, rotacional, múltiplo) e numero de objetos na cena (nenhum, simples, múltiplo). Assim, o grupo "VM" corresponde ao movimento Vertical com Múltiplos objetos.
 
@@ -543,13 +536,11 @@ A Tabela~\ref{tab:list_videos} exibe a lista dos cinquenta e seis vídeos utiliz
 As colunas "SI" e "TI" mostram informações espaciais (SI) e temporais (TI), calculadas seguindo a recomendação ITU-T P.910, porém, utilizando a mediana em vez do valor máximo, pois os vídeos são longos e possuem picos que não caracterizam o vídeo em si. Os índices de correlação de Pearson entre SI e taxa de bits, assim como entre TI e taxa de bits, são respectivamente de 0.519 e 0.759 para projeção cúbica e 0,528 e 0,773 para projeção equirretangular, indicando uma influência razoável tanto de SI quanto de TI na taxa de bits, com ênfase à atividade temporal.
 
 Examinando o gráfico de dispersão de SI e TI na Figura~\ref{fig:scatter_si_ti}, observamos um padrão bem distribuído entre os vídeos: a taxa de bits média é de 4,22 Mbps, o SI médio é de 46,3 e o TI médio é de 8,5.  Os índices de correlação de Pearson entre SI e taxa de bits, bem como entre TI e taxa de bits, são de 0.530 e 0.765, respectivamente, significando uma influência razoável tanto de SI quanto de TI na taxa de bits. 
-
-\begin{figure}[h]
+\begin{figure}[htb]
         \centering
         \subfigure[Projeção CMP. \label{fig:scatter_CMP}]{
                 \includegraphics[width=0.8\linewidth]{fig/scatter_CMP.png}
         } % end subfigure
-       
         \subfigure[Projeção ERP. \label{fig:scatter_ERP}]{
                 \includegraphics[width=0.8\linewidth]{fig/scatter_ERP.png}
         } % end subfigure
@@ -557,7 +548,7 @@ Examinando o gráfico de dispersão de SI e TI na Figura~\ref{fig:scatter_si_ti}
         \label{fig:scatter_si_ti}
 \end{figure}
 
-Para replicar uma condição comparável DASH-SRD, os ladrilho passaram pelo ladrilhamento antes da codificação, garantindo que cada ladrilho fosse espacialmente independente. Para cada vídeo, geramos quatro novas sequências de vídeo, cada uma com padrões de os ladrilhos conforme a tabela~\ref{tab:ladrilhamento_resolucoes}. Quanto maior o numero de ladrilhos, menor o numero de pixel em cada ladrilho, reduzindo o espaço de busca do compensador de movimento do codificador e reduzindo a eficiência da compressão. A projeção cúbica, tendo proporção menor tende a ser uma representação mais compacta, apresentando menor taxa de bits, porém com maior complexidade de compressão. Apesar de quanto menor os ladrilhos, menos pixels não visto são processador, este procedimento produz redução na eficiência do codificador. Além disso, quanto mais ladrilhos forem solicitados, serão necessárias múltiplas instâncias de um decodificador no cliente e mais complexo será o processo, pois para reproduzir um único quadro do ladrilho, todo o chunk precisa ser decodificado.
+Para replicar uma condição comparável DASH-SRD, os ladrilhos passaram pelo ladrilhamento antes da codificação, garantindo que cada ladrilho fosse espacialmente independente. Para cada vídeo, geramos quatro novas sequências de vídeo, cada uma com padrões de os ladrilhos conforme a tabela~\ref{tab:ladrilhamento_resolucoes}. Quanto maior o numero de ladrilhos, menor o numero de pixel em cada ladrilho, reduzindo o espaço de busca do compensador de movimento do codificador e reduzindo a eficiência da compressão. A projeção cúbica, tendo proporção menor tende a ser uma representação mais compacta, apresentando menor taxa de bits, porém com maior complexidade de compressão. Apesar de quanto menor os ladrilhos, menos pixels não visto são processador, este procedimento produz redução na eficiência do codificador. Além disso, quanto mais ladrilhos forem solicitados, serão necessárias múltiplas instâncias de um decodificador no cliente e mais complexo será o processo, pois para reproduzir um único quadro do ladrilho, todo o chunk precisa ser decodificado.
 
 
 Subsequentemente, utilizamos o codificador HEVC x265 no FFmpeg\footnote{https://ffmpeg.org/} para padronizar e codificar cada ladrilho, empregando seis valores distintos do Fator de Taxa Constante (CRF) para controlar a qualidade/taxa de bits: 16, 22, 28, 34, 40 e 46. O valor de CRF mais baixo (mais alto) de 16 (46) corresponde à maior (menor) qualidade de vídeo. O valor padrão de 28 é recomendado pelo codificador por seu equilíbrio entre qualidade e taxa de compressão. Vale ressaltar que cada incremento de 3 no valor de CRF resulta em uma redução pela metade na taxa de bits; em nosso conjunto, a taxa de bits diminui quatro vezes para os valores de CRF especificados. Os parâmetros de codificação do vídeo estão detalhados na Tabela \ref{tab:parametros_qlt}. O GOP do vídeo foi fixado em 30 quadros, o parâmetro para detecção de cortes de cena foi desativado para que o GOP não varie dentro de um chunk e o parâmetro "--no-info" foi utilizado para omitir cerca de 200 bytes de informações sobre o codificador no cabeçalho mp4 e assim reduzir o overhead dos vídeos. Esta quantidade é relativamente significativa quando se trata de chunks muito pequenos com baixa complexidade de codificação e alta compressão. Além disso os vídeos foram processados com os parâmetros "-tune psnr" para comparação mais precisa das métricas de distorção, como MSE e PSNR. 
@@ -588,7 +579,6 @@ O processo de decodificação de vídeo ocorreu em um computador desktop i7-4770
 A seguir, para cada quadro de cada chunk, métricas objetivas de qualidade, incluindo SSIM, MSE, WS-MSE e S-MSE, serão calculadas comparando os quadros decodificados os vídeos codificados com CRF 0. As métricas são armazenadas em um JSON em uma estrutura de árvores, em que cada nível representa respectivamente a projeção, nome do video, padrão de ladrilhamento, crf, ladrilho e chunk. No caso do tempo de decodificação, foi armazenado um valor para cada decodificação.
 
 Para a análise das distribuições estatística dos chunks codificados, empregamos a biblioteca Python SciPy. Por padrão, a SciPy utiliza do método de Estimação por Máxima Verossimilhança para determinar os parâmetros da distribuições de probabilidade de densidade (PDF). As distribuições analisadas são: Burr Tipo XII , Birnbaum-Saunders, Gamma, Inversa Gaussiana, Rayleigh, Log Normal, Generalized Pareto, Pareto, Half-Normal, e Exponencial\footnote{https://docs.scipy.org/doc/scipy/reference/stats.html}. Como ferramenta auxiliar foi utilizado o pacote Fitter para testar todas as distribuições\footnote{https://fitter.readthedocs.io/}. Além das distribuições foi analisada a correlação entre as métricas e para a avaliação dos erros, foi utiliza a raiz do erro quadrático médio (RMSE). Nos resultados produzidos pela Scipy, os valores são normalizados e os parâmetros de deslocamento ({\it loc}) e escala ({\it scale}) devem ser aplicados à distribuição normalizada para obter a ajustada, conforme a equação~\ref{eq:shift_scale}.
-
 \begin{equation}
         \label{eq:shift_scale}
         \text{fitted\_pdf}(x) = \left( \frac{1}{scale} \right) \text{normalized\_pdf}\left(\frac{x-loc}{scale}\right).
